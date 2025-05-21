@@ -21,5 +21,13 @@
     <ClCompile Include="no taci amu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="tre sa mearga.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="list.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
