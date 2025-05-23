@@ -19,17 +19,32 @@ private:
 	float upgradeCost;
 
 	// SFML objects
+
+	// Backround
 	sf::Texture backgroundTexture;
-	sf::Texture buttonTexture;
-	sf::Texture gumballTexture;
 	sf::Sprite backgroundSprite;
-	sf::Sprite buttonSprite;
+
+	// Upgrade button
+	sf::Texture upgradeButtonTexture;
+	sf::Sprite upgradeButtonSprite;
+
+	// Gumball
+	sf::Texture gumballTexture;
 	sf::Sprite gumballSprite;
+
+	// Shop button
+	sf::Texture shopButtonTexture;
+	sf::Sprite shopButtonSprite;
+
+	// Texts for main scene
 	TextsMain textsMain;
 
-	sf::Texture shopButton;
-	sf::Sprite shopButtonSprite;
+	// Texts for shop scene
 	TextsShop textsShop;
+
+	// Booleans for checking if we are in the main scene or shop scene
+	bool isMainScene;
+	bool isShopScene;
 
 	// Function for loading background
 	bool loadTexturesMain();

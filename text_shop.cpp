@@ -13,9 +13,9 @@ std::string formatFloatShop(float value) {
 }
 
 TextsShop::TextsShop() {
-	item1.setString("NIGGER");
+	item1.setString("ITEM 1");
 	item1Cost.setString("1.00");
-	item2.setString("MICU");
+	item2.setString("ITEM 2");
 	item2Cost.setString("0.99");
 }
 
@@ -42,12 +42,12 @@ bool TextsShop::perfromSetupShop() {
 }
 
 void TextsShop::drawInGameTextsShop(sf::RenderWindow* window, float score, float upgradeCost, float mousePower) {
-	item1.setString("Score: " );
+	//item1.setString("Score: " );
 	window->draw(item1);
-	item1Cost.setString("Upgrade Cost: " );
+	//item1Cost.setString("Upgrade Cost: " );
 	window->draw(item1Cost);
-	item2.setString("Mouse Power: ");
+	//item2.setString("Mouse Power: ");
 	window->draw(item2);
-	item2Cost.setString("rebe sa mearga: ");
+	//item2Cost.setString("rebe sa mearga: ");
 	window->draw(item2Cost);
 }
