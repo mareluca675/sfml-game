@@ -19,7 +19,7 @@ bool Game::loadTexturesMain() {
         return false;
     }
 
-	if (!shopButtonTexture.loadFromFile("textures/button.png")) {
+	if (!shopButtonTexture.loadFromFile("textures/usa.png")) {
 		std::cerr << "ERROR: Could not load shop image.";
 		return false;
 	}
@@ -39,7 +39,7 @@ bool Game::loadTexturesMain() {
 
     // Set the texture rect for the background sprite
     shopButtonSprite.setTexture(shopButtonTexture);
-    shopButtonSprite.setPosition(0.0f, 300.0f);
+    shopButtonSprite.setPosition(1177.0f, 477.0f);
 
     // Set the texture rect for the background sprite
     backgroundSprite.setTexture(backgroundTexture);
