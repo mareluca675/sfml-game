@@ -47,23 +47,6 @@ bool Game::loadTexturesMain() {
 }
 
 bool Game::loadTexturesShop() {
-    if (!item1Texture.loadFromFile("textures/wooden plank.png")) {
-        std::cerr << "ERROR: Could not load backround image.";
-        return false;
-    }
-
-    if (!item2Texture.loadFromFile("textures/wooden plank.png")) {
-        std::cerr << "ERROR: Could not load button image.";
-        return false;
-    }
-	// Set the texture rect for item1 sprite
-    item1Sprite.setTexture(item1Texture);
-    item1Sprite.setPosition(0.0f, 50.0f);
-    // Set the texture rect for the item2 sprite
-    item2Sprite.setTexture(item2Texture);
-    item2Sprite.setPosition(WINDOW_WIDTH / 2.0f, WINDOW_HEIGHT / 2.0f);
-    // Set the texture rect for the background sprite
-    backgroundSprite.setTexture(backgroundTexture);
     return true;
 }
 
@@ -105,7 +88,7 @@ bool Game::runGame() {
                         upgradeCost = std::ceil(upgradeCost + 1.755f * upgradeCost * UPGRADE_CONSTANT);
                     }
                 }
-                else if (shopButtonSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                else if (isShopScene && shopButtonSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
                     isMainScene = !isMainScene;
                     isShopScene = !isShopScene;
                 }
@@ -119,7 +102,6 @@ bool Game::runGame() {
             window.clear();
 
             if (isMainScene) {
-                performSetupMain();
                 window.draw(backgroundSprite);
                 textsMain.drawInGameTextsMain(&window, score, upgradeCost, mousePower);
                 window.draw(upgradeButtonSprite);
@@ -127,12 +109,10 @@ bool Game::runGame() {
                 window.draw(gumballSprite);
             }
             else if (isShopScene) {
-				performSetupShop();
-                window.draw(gumballSprite);
                 window.draw(shopButtonSprite);
-                window.draw(item1Sprite);
-                window.draw(item2Sprite);
             }
+
+
             window.display();
         }
     }
