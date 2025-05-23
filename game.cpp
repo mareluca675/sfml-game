@@ -1,5 +1,5 @@
 #include "game.h"
-
+#include "player.h"
 Game::Game() {
 	mousePower = 1.0f;
 	score = 0.0f;
@@ -19,7 +19,7 @@ bool Game::loadTexturesMain() {
         return false;
     }
 
-	if (!shopButtonTexture.loadFromFile("textures/usa.png")) {
+	if (!shopButtonEnterTexture.loadFromFile("textures/usa.png")) {
 		std::cerr << "ERROR: Could not load shop image.";
 		return false;
 	}
@@ -38,8 +38,8 @@ bool Game::loadTexturesMain() {
     gumballSprite.setPosition(WINDOW_WIDTH / 2.0f - 50, WINDOW_HEIGHT / 2.0f - 50);
 
     // Set the texture rect for the background sprite
-    shopButtonSprite.setTexture(shopButtonTexture);
-    shopButtonSprite.setPosition(1177.0f, 477.0f);
+    shopButtonEnterSprite.setTexture(shopButtonEnterTexture);
+    shopButtonEnterSprite.setPosition(1177.0f, 477.0f);
 
     // Set the texture rect for the background sprite
     backgroundSprite.setTexture(backgroundTexture);
@@ -47,6 +47,21 @@ bool Game::loadTexturesMain() {
 }
 
 bool Game::loadTexturesShop() {
+
+    if (!backgroundShopTexture.loadFromFile("textures/Shop.png")) {
+        std::cerr << "ERROR: Could not load shop image.";
+        return false;
+	}
+    if (!shopButtonLeaveTexture.loadFromFile("textures/door.png")) {
+        std::cerr << "ERROR: Could not load shop image.";
+        return false;
+    }
+
+	// Set the texture rect for the button sprite
+	shopButtonLeaveSprite.setTexture(shopButtonLeaveTexture);
+	shopButtonLeaveSprite.setPosition(950.0f, 2.0f);
+
+	backgroundShopSprite.setTexture(backgroundShopTexture); 
     return true;
 }
 
@@ -62,7 +77,7 @@ bool Game::performSetupShop() {
 
 bool Game::runGame() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "GumbaLL");
-
+    Player player;
     while (window.isOpen()) {
         // Process events
         sf::Event event;
@@ -93,23 +108,30 @@ bool Game::runGame() {
                     score += mousePower;
                     score = std::round(score * 100.0f) / 100.0f;
                 }
-                if (shopButtonSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-                    isMainScene = !isMainScene;
-                    isShopScene = !isShopScene;
+                if (shopButtonEnterSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                    isMainScene = 0;
+                    isShopScene = 1;
+                }
+                if (shopButtonLeaveSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                    isMainScene = 1;
+                    isShopScene = 0;
                 }
             }
 
             window.clear();
 
             if (isMainScene) {
+                loadTexturesMain();
                 window.draw(backgroundSprite);
                 textsMain.drawInGameTextsMain(&window, score, upgradeCost, mousePower);
                 window.draw(upgradeButtonSprite);
-				window.draw(shopButtonSprite);
+				window.draw(shopButtonEnterSprite);
                 window.draw(gumballSprite);
             }
             else if (isShopScene) {
-                window.draw(shopButtonSprite);
+                loadTexturesShop();
+                window.draw(backgroundShopSprite);
+                window.draw(shopButtonLeaveSprite);
             }
 
             window.display();

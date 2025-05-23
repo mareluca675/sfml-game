@@ -32,10 +32,17 @@ private:
 	sf::Texture gumballTexture;
 	sf::Sprite gumballSprite;
 
-	// Shop button
-	sf::Texture shopButtonTexture;
-	sf::Sprite shopButtonSprite;
+	// Shop button enter
+	sf::Texture shopButtonEnterTexture;
+	sf::Sprite shopButtonEnterSprite;
 
+	// Shop button leave
+	sf::Texture shopButtonLeaveTexture;
+	sf::Sprite shopButtonLeaveSprite;
+
+	// Bacground Shop
+	sf::Texture backgroundShopTexture;
+	sf::Sprite backgroundShopSprite;
 	// Item1 Texture
 	sf::Texture item1Texture;
 	sf::Sprite item1Sprite;

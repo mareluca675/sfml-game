@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
-#include "list.hpp"
 #include "item.h"
+#include "list.hpp"
 
 #ifndef PLAYER_H
 #define PLAYER_H
@@ -10,8 +10,9 @@ private:
 	float mousePower;
 	float criticalChance;
 	List<Item> equipment;
-	Player();
+	
 public:
+	Player();
 	void equipItem(Item);
 	Item getItem(int index) { return equipment.at(index); }
 	float getMousePower() { return mousePower; }
