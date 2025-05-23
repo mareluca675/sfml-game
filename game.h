@@ -72,6 +72,10 @@ public:
 	// Getter and Setter for score
 	float getScore() const { return score; }
 	void setScore(float newScore) { score = newScore; }
+	// Getter and Setter for upgradeCost	
+	float getUpgradeCost() const { return upgradeCost; }
+	void setUpgradeCost(float newUpgradeCost) { upgradeCost = newUpgradeCost; }
+
 };
 
 #endif

@@ -10,7 +10,7 @@ Game::Game() {
 }
 
 bool Game::loadTexturesMain() {
-    if (!backgroundTexture.loadFromFile("textures/background.png")) {
+    if (!backgroundTexture.loadFromFile("textures/newbackground.png")) {
         std::cerr << "ERROR: Could not load backround image.";
         return false;
     }
@@ -20,12 +20,12 @@ bool Game::loadTexturesMain() {
         return false;
     }
 
-	if (!shopButtonEnterTexture.loadFromFile("textures/usa.png")) {
+	if (!shopButtonEnterTexture.loadFromFile("textures/Shop.png")) {
 		std::cerr << "ERROR: Could not load shop image.";
 		return false;
 	}
 
-    if (!gumballTexture.loadFromFile("textures/gumball.png")) {
+    if (!gumballTexture.loadFromFile("textures/gumball_pixel.png")) {
         std::cerr << "ERROR: Could not load gumball image.";
         return false;
     }
@@ -40,7 +40,7 @@ bool Game::loadTexturesMain() {
 
     // Set the texture rect for the background sprite
     shopButtonEnterSprite.setTexture(shopButtonEnterTexture);
-    shopButtonEnterSprite.setPosition(1177.0f, 477.0f);
+    shopButtonEnterSprite.setPosition(1110.0f, 379.0f);
 
     // Set the texture rect for the background sprite
     backgroundSprite.setTexture(backgroundTexture);
@@ -48,34 +48,19 @@ bool Game::loadTexturesMain() {
 }
 
 bool Game::loadTexturesShop() {
-
-    sf::Texture item1Texture;
-    sf::Sprite item1Sprite;
-    if (!item1Texture.loadFromFile("textures/book.png")) {
+    if (!backgroundShopTexture.loadFromFile("textures/backgroundShop.png")) {
         std::cerr << "ERROR: Could not load shop image.";
         return false;
     }
-	item1Sprite.setTexture(item1Texture);
-    item1Sprite.setPosition(WINDOW_WIDTH / 2.0f - 50, WINDOW_HEIGHT / 2.0f - 50);
-    item1.setName("carte"); 
-	item1.setCost(10.0f);
-	item1.setSprite(item1Sprite);
-    item1.setCriticalChance(0.5);
-
-    if (!backgroundShopTexture.loadFromFile("textures/Shop.png")) {
-        std::cerr << "ERROR: Could not load shop image.";
-        return false;
-	}
     if (!shopButtonLeaveTexture.loadFromFile("textures/door.png")) {
         std::cerr << "ERROR: Could not load shop image.";
         return false;
     }
 
-	// Set the texture rect for the button sprite
-	shopButtonLeaveSprite.setTexture(shopButtonLeaveTexture);
-	shopButtonLeaveSprite.setPosition(950.0f, 2.0f);
+    shopButtonLeaveSprite.setTexture(shopButtonLeaveTexture);
+    shopButtonLeaveSprite.setPosition(950.0f, 2.0f);
+    backgroundShopSprite.setTexture(backgroundShopTexture);
 
-	backgroundShopSprite.setTexture(backgroundShopTexture); 
     return true;
 }
 
@@ -91,7 +76,22 @@ bool Game::performSetupShop() {
 
 bool Game::runGame() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "GumbaLL");
+	Game game;
+    try {
+        item1.setTexture("textures/rmt.png");
+    }
+    catch (const std::exception& e) {
+        std::cerr << "ERROR: " << e.what() << std::endl;
+        return false;
+    }
+
+    item1.setName("carte");
+    item1.setCost(10.0f);
+    item1.setCriticalChance(0.5f);
+    item1.setSpritePosition(WINDOW_WIDTH / 2.0f - 50, WINDOW_HEIGHT / 2.0f - 50);
+
     Player player;
+
     while (window.isOpen()) {
         // Process events
         sf::Event event;
@@ -109,37 +109,31 @@ bool Game::runGame() {
 
                 // Check if the button was clicked
                 if (isMainScene && upgradeButtonSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-                    if (score >= upgradeCost) {
-                        score -= upgradeCost;
-                        score = std::round(score * 100.0f) / 100.0f;
-                        player.setMousePower(  player.getMousePower() + player.getMousePower() * UPGRADE_CONSTANT);//setereeee
+                    if (game.getScore() >= game.getUpgradeCost()) {
+                        game.setScore(game.getScore() - game.getUpgradeCost());
+                        game.setScore(std::round(game.getScore() * 100.0f) / 100.0f);
+                        player.setMousePower(player.getMousePower() + player.getMousePower() * UPGRADE_CONSTANT);//setereeee
                         player.setMousePower(std::round(player.getMousePower() * 100.0f) / 100.0f); // Round to 2 decimal places
-                        upgradeCost = std::ceil(upgradeCost + 1.755f * upgradeCost * UPGRADE_CONSTANT);
+                        game.setUpgradeCost(std::ceil(game.getUpgradeCost() + 1.755f * game.getUpgradeCost() * UPGRADE_CONSTANT));
                     }
                 }
                 if (isMainScene && gumballSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
                     // Increment score by mousePower
-                    score += player.getMousePower();
-                    score = std::round(score * 100.0f) / 100.0f;
+                    game.setScore(game.getScore() + player.getMousePower());
+                    game.setScore(std::round(game.getScore() * 100.0f) / 100.0f);
                 }
-                if (shopButtonEnterSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                else if (isMainScene && !isShopScene && shopButtonEnterSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
                     isMainScene = 0;
                     isShopScene = 1;
                 }
-                if (shopButtonLeaveSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                else if (!isMainScene && isShopScene && shopButtonLeaveSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
                     isMainScene = 1;
                     isShopScene = 0;
                 }
-                if (isShopScene && item1.getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-					// Check if the item is affordable
-                    if (score >= item1.getCost()) {
+                else if (isShopScene && !isMainScene && item1.getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)) && game.getScore() >= item1.getCost()) {
                         // Deduct the cost from the score
-                        score -= item1.getCost();
-                        score = std::round(score * 100.0f) / 100.0f; // Round to 2 decimal places
-                        // Apply the item's effect
-                        player.setMousePower(player.getMousePower() + player.getMousePower() * item1.getCriticalChance());
-                        player.setMousePower(std::round(player.getMousePower() * 100.0f) / 100.0f); // Round to 2 decimal places
-                    }
+					player.equipItem(item1);
+					item1.buyItem(item1, game);
                 }
             }
 
@@ -148,7 +142,7 @@ bool Game::runGame() {
             if (isMainScene) {
                 loadTexturesMain();
                 window.draw(backgroundSprite);
-                textsMain.drawInGameTextsMain(&window, score, upgradeCost, player.getMousePower());
+                textsMain.drawInGameTextsMain(&window, game.getScore(), game.getUpgradeCost(), player.getMousePower());
                 window.draw(upgradeButtonSprite);
 				window.draw(shopButtonEnterSprite);
                 window.draw(gumballSprite);
