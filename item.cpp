@@ -4,6 +4,6 @@
 void Item::buyItem(Item &item, Game &game)
 {
 	game.setScore(game.getScore() - item.getCost());
-	item.setCost(item.getCost() * 1.5);
-	item.setCriticalChance(item.getCriticalChance() + 0.5);
+	item.setCost(item.getCost() * 1.5f);
+	item.setCriticalChance(item.getCriticalChance() + 0.5f);
 }

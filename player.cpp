@@ -3,7 +3,6 @@
 Player::Player() {
 	mousePower = 1.0f;
 	criticalChance = 0.0f;
-	equipment = List<Item>();
 }
 
 void Player::equipItem(Item item) {

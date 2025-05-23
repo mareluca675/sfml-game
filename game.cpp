@@ -88,14 +88,14 @@ bool Game::runGame() {
                         upgradeCost = std::ceil(upgradeCost + 1.755f * upgradeCost * UPGRADE_CONSTANT);
                     }
                 }
-                else if (isShopScene && shopButtonSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-                    isMainScene = !isMainScene;
-                    isShopScene = !isShopScene;
-                }
-                else if (isMainScene && gumballSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                if (isMainScene && gumballSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
                     // Increment score by mousePower
                     score += mousePower;
                     score = std::round(score * 100.0f) / 100.0f;
+                }
+                if (shopButtonSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                    isMainScene = !isMainScene;
+                    isShopScene = !isShopScene;
                 }
             }
 
@@ -111,7 +111,6 @@ bool Game::runGame() {
             else if (isShopScene) {
                 window.draw(shopButtonSprite);
             }
-
 
             window.display();
         }
