@@ -17,6 +17,9 @@ public:
 	Item getItem(int index) { return equipment.at(index); }
 	float getMousePower() { return mousePower; }
 	float getCriticalChance() { return criticalChance; }
+	// setters
+	void setMousePower(float power) { mousePower = power; }
+	void setCriticalChance(float chance) { criticalChance = chance; }	
 };
 
 #endif

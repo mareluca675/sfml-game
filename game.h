@@ -14,10 +14,8 @@ const unsigned int FRAME_RATE_LIMIT = 60;
 class Game {
 private:
 	// Game variables
-	float mousePower;
 	float score;
 	float upgradeCost;
-
 	// SFML objects
 
 	// Backround
@@ -67,9 +65,10 @@ private:
 public:
 	// Constructor
 	Game();
+	bool runGame();
 	bool performSetupMain();
 	bool performSetupShop();
-	bool runGame();
+	
 	// Getter and Setter for score
 	float getScore() const { return score; }
 	void setScore(float newScore) { score = newScore; }
