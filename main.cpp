@@ -11,7 +11,7 @@ int main() {
 
     // Main loop
     while (true) {
-        if(!world.performSetup()) {
+        if(!world.performSetupMain()) {
 			std::cout << "ERROR: Couldn't perfrom setup.";
 			return 1;
 		}

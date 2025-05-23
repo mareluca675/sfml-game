@@ -1,8 +1,9 @@
-#include "texts.h"
+#include "texts_main.h"
+#include "texts_shop.h"
 #include <iostream>
 
-#ifndef GAMEWORLD_H
-#define GAMEWORLD_H
+#ifndef GAME_H
+#define GAME_H
 
 // Constants
 const float UPGRADE_CONSTANT = 0.2f;
@@ -24,14 +25,20 @@ private:
 	sf::Sprite backgroundSprite;
 	sf::Sprite buttonSprite;
 	sf::Sprite gumballSprite;
-	Texts texts;
+	TextsMain textsMain;
+
+	sf::Texture shopButton;
+	sf::Sprite shopButtonSprite;
+	TextsShop textsShop;
 
 	// Function for loading background
-	bool loadTextures();
+	bool loadTexturesMain();
+	bool loadTexturesShop();
 public:
 	// Constructor
 	Game();
-	bool performSetup();
+	bool performSetupMain();
+	bool performSetupShop();
 	bool runGame();
 };
 

@@ -6,7 +6,7 @@ Game::Game() {
 	upgradeCost = 1.0f;
 }
 
-bool Game::loadTextures() {
+bool Game::loadTexturesMain() {
     if (!backgroundTexture.loadFromFile("textures/background.png")) {
         std::cerr << "ERROR: Could not load backround image.";
         return false;
@@ -35,9 +35,43 @@ bool Game::loadTextures() {
     return true;
 }
 
-bool Game::performSetup() {
-    texts = Texts();
-    return loadTextures() && texts.perfromSetup();
+bool Game::loadTexturesShop() {
+    if (!backgroundTexture.loadFromFile("textures/background.png")) {
+        std::cerr << "ERROR: Could not load backround image.";
+        return false;
+    }
+
+    if (!buttonTexture.loadFromFile("textures/button.png")) {
+        std::cerr << "ERROR: Could not load button image.";
+        return false;
+    }
+
+    if (!gumballTexture.loadFromFile("textures/gumball.png")) {
+        std::cerr << "ERROR: Could not load gumball image.";
+        return false;
+    }
+
+    // Set the texture rect for the button sprite
+    buttonSprite.setTexture(buttonTexture);
+    buttonSprite.setPosition(0.0f, 50.0f);
+
+    // Set the texture rect for the gumball sprite
+    gumballSprite.setTexture(gumballTexture);
+    gumballSprite.setPosition(WINDOW_WIDTH / 2.0f - 50, WINDOW_HEIGHT / 2.0f - 50);
+
+    // Set the texture rect for the background sprite
+    backgroundSprite.setTexture(backgroundTexture);
+    return true;
+}
+
+bool Game::performSetupMain() {
+    textsMain = TextsMain();
+    return loadTexturesMain() && textsMain.perfromSetupMain();
+}
+
+bool Game::performSetupShop() {
+    textsShop = TextsShop();
+    return loadTexturesShop() && textsShop.perfromSetupShop();
 }
 
 bool Game::runGame() {
@@ -77,9 +111,9 @@ bool Game::runGame() {
 
             window.clear();
             window.draw(backgroundSprite);
-            texts.drawInGameTexts(&window, score, upgradeCost, mousePower);
-			window.draw(buttonSprite);
-			window.draw(gumballSprite);
+            textsMain.drawInGameTextsMain(&window, score, upgradeCost, mousePower);
+            window.draw(buttonSprite);
+            window.draw(gumballSprite);
             window.display();
         }
     }
