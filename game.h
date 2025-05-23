@@ -9,7 +9,7 @@
 constexpr float UPGRADE_CONSTANT = 0.2f; // Use 'constexpr' instead of 'const' for compile-time constants
 constexpr unsigned int WINDOW_WIDTH = 1280;
 constexpr unsigned int WINDOW_HEIGHT = 720;
-constexpr unsigned int FRAME_RATE_LIMIT = 60;
+const unsigned int FRAME_RATE_LIMIT = 60;
 
 class Game {
 private:
@@ -36,6 +36,14 @@ private:
 	sf::Texture shopButtonTexture;
 	sf::Sprite shopButtonSprite;
 
+	// Item1 Texture
+	sf::Texture item1Texture;
+	sf::Sprite item1Sprite;
+
+	// Item2 Texture
+	sf::Texture item2Texture;
+	sf::Sprite item2Sprite;
+
 	// Texts for main scene
 	TextsMain textsMain;
 
@@ -55,6 +63,9 @@ public:
 	bool performSetupMain();
 	bool performSetupShop();
 	bool runGame();
+	// Getter and Setter for score
+	float getScore() const { return score; }
+	void setScore(float newScore) { score = newScore; }
 };
 
 #endif
