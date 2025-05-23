@@ -6,10 +6,10 @@
 #define GAME_H
 
 // Constants
-const float UPGRADE_CONSTANT = 0.2f;
-const unsigned int WINDOW_WIDTH = 1280;
-const unsigned int WINDOW_HEIGHT = 720;
-const unsigned int FRAME_RATE_LIMIT = 60;
+constexpr float UPGRADE_CONSTANT = 0.2f; // Use 'constexpr' instead of 'const' for compile-time constants
+constexpr unsigned int WINDOW_WIDTH = 1280;
+constexpr unsigned int WINDOW_HEIGHT = 720;
+constexpr unsigned int FRAME_RATE_LIMIT = 60;
 
 class Game {
 private:

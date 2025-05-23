@@ -90,8 +90,8 @@ bool Game::runGame() {
                     }
                 }
                 else if (shopButtonSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-                    isMainScene = false;
-                    isShopScene = true;
+                    isMainScene = !isMainScene;
+                    isShopScene = !isShopScene;
                 }
                 else if (gumballSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
                     // Increment score by mousePower
@@ -111,6 +111,7 @@ bool Game::runGame() {
             }
             else if (isShopScene) {
                 window.draw(gumballSprite);
+                window.draw(shopButtonSprite);
             }
 
 
