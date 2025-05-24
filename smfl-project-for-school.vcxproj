@@ -112,7 +112,8 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>UPGRADE_CONSTANT=0.2;WINDOW_WIDTH=1280;WINDOW_HEIGHT=720;FRAME_RATE_LIMIT=60</PreprocessorDefinitions>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -144,13 +145,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="item.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="texts.cpp" />
+    <ClCompile Include="player.cpp" />
+    <ClCompile Include="texts_main.cpp" />
+    <ClCompile Include="text_shop.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h" />
+    <ClInclude Include="item.h" />
     <ClInclude Include="list.hpp" />
-    <ClInclude Include="texts.h" />
+    <ClInclude Include="player.h" />
+    <ClInclude Include="texts_main.h" />
+    <ClInclude Include="texts_shop.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

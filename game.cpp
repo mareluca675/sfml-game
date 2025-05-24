@@ -1,47 +1,96 @@
 #include "game.h"
-
+#include "player.h"
+#include "item.h"
+Item item1;
 Game::Game() {
-	mousePower = 1.0f;
-	score = 0.0f;
 	upgradeCost = 1.0f;
+	score = 0.0f;
+    isMainScene = true;
+    isShopScene = false;
 }
 
-bool Game::loadTextures1() {
-    if (!backgroundTexture.loadFromFile("textures/background.png")) {
+bool Game::loadTexturesMain() {
+    if (!backgroundTexture.loadFromFile("textures/newbackground.png")) {
         std::cerr << "ERROR: Could not load backround image.";
         return false;
     }
 
-	if (!buttonTexture.loadFromFile("textures/button.png")) {
-		std::cerr << "ERROR: Could not load button image.";
+    if (!upgradeButtonTexture.loadFromFile("textures/button.png")) {
+        std::cerr << "ERROR: Could not load button image.";
+        return false;
+    }
+
+	if (!shopButtonEnterTexture.loadFromFile("textures/Shop.png")) {
+		std::cerr << "ERROR: Could not load shop image.";
 		return false;
 	}
 
-	if (!gumballTexture.loadFromFile("textures/gumball.png")) {
-		std::cerr << "ERROR: Could not load gumball image.";
-		return false;
-	}
+    if (!gumballTexture.loadFromFile("textures/gumball_pixel.png")) {
+        std::cerr << "ERROR: Could not load gumball image.";
+        return false;
+    }
 
-	// Set the texture rect for the button sprite
-	buttonSprite.setTexture(buttonTexture);
-	buttonSprite.setPosition(0.0f,50.0f);
-    
-	// Set the texture rect for the gumball sprite
-	gumballSprite.setTexture(gumballTexture);
-    gumballSprite.setPosition(WINDOW_WIDTH / 2.0f -  50, WINDOW_HEIGHT / 2.0f - 50);
+    // Set the texture rect for the button sprite
+    upgradeButtonSprite.setTexture(upgradeButtonTexture);
+    upgradeButtonSprite.setPosition(0.0f, 50.0f);
 
-	// Set the texture rect for the background sprite
+    // Set the texture rect for the gumball sprite
+    gumballSprite.setTexture(gumballTexture);
+    gumballSprite.setPosition(WINDOW_WIDTH / 2.0f - 50, WINDOW_HEIGHT / 2.0f - 50);
+
+    // Set the texture rect for the background sprite
+    shopButtonEnterSprite.setTexture(shopButtonEnterTexture);
+    shopButtonEnterSprite.setPosition(1110.0f, 379.0f);
+
+    // Set the texture rect for the background sprite
     backgroundSprite.setTexture(backgroundTexture);
     return true;
 }
 
-bool Game::performSetup() {
-    texts = Texts();
-    return loadTextures1() && texts.perfromSetup();
+bool Game::loadTexturesShop() {
+    if (!backgroundShopTexture.loadFromFile("textures/backgroundShop.png")) {
+        std::cerr << "ERROR: Could not load shop image.";
+        return false;
+    }
+    if (!shopButtonLeaveTexture.loadFromFile("textures/door.png")) {
+        std::cerr << "ERROR: Could not load shop image.";
+        return false;
+    }
+
+    shopButtonLeaveSprite.setTexture(shopButtonLeaveTexture);
+    shopButtonLeaveSprite.setPosition(950.0f, 2.0f);
+    backgroundShopSprite.setTexture(backgroundShopTexture);
+
+    return true;
+}
+
+bool Game::performSetupMain() {
+    textsMain = TextsMain();
+    return loadTexturesMain() && textsMain.perfromSetupMain();
+}
+
+bool Game::performSetupShop() {
+    textsShop = TextsShop();
+    return loadTexturesShop() && textsShop.perfromSetupShop();
 }
 
 bool Game::runGame() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "GumbaLL");
+	Game game;
+    try {
+        item1.setTexture("textures/rmt.png");
+    }
+    catch (const std::exception& e) {
+        std::cerr << "ERROR: " << e.what() << std::endl;
+        return false;
+    }
+
+    item1.setName("carte");
+    item1.setCost(10.0f);
+    item1.setCriticalChance(0.5f);
+    item1.setSpritePosition(WINDOW_WIDTH / 2.0f - 50, WINDOW_HEIGHT / 2.0f - 50);
+
+    Player player;
 
     while (window.isOpen()) {
         // Process events
@@ -59,26 +108,52 @@ bool Game::runGame() {
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
                 // Check if the button was clicked
-                if (buttonSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-                    if (score >= upgradeCost) {
-                        score -= upgradeCost;
-                        score = std::round(score * 100.0f) / 100.0f;
-                        mousePower += mousePower * UPGRADE_CONSTANT;
-                        mousePower = std::round(mousePower * 100.0f) / 100.0f; // Round to 2 decimal places
-                        upgradeCost = std::ceil(upgradeCost + 1.755f * upgradeCost * UPGRADE_CONSTANT);
+                if (isMainScene && upgradeButtonSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                    if (game.getScore() >= game.getUpgradeCost()) {
+                        game.setScore(game.getScore() - game.getUpgradeCost());
+                        game.setScore(std::round(game.getScore() * 100.0f) / 100.0f);
+                        player.setMousePower(player.getMousePower() + player.getMousePower() * UPGRADE_CONSTANT);//setereeee
+                        player.setMousePower(std::round(player.getMousePower() * 100.0f) / 100.0f); // Round to 2 decimal places
+                        game.setUpgradeCost(std::ceil(game.getUpgradeCost() + 1.755f * game.getUpgradeCost() * UPGRADE_CONSTANT));
                     }
                 }
-                else if (gumballSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                if (isMainScene && gumballSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
                     // Increment score by mousePower
-                    score += mousePower;
-                    score = std::round(score * 100.0f) / 100.0f;
+                    game.setScore(game.getScore() + player.getMousePower());
+                    game.setScore(std::round(game.getScore() * 100.0f) / 100.0f);
+                }
+                else if (isMainScene && !isShopScene && shopButtonEnterSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                    isMainScene = 0;
+                    isShopScene = 1;
+                }
+                else if (!isMainScene && isShopScene && shopButtonLeaveSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                    isMainScene = 1;
+                    isShopScene = 0;
+                }
+                else if (isShopScene && !isMainScene && item1.getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)) && game.getScore() >= item1.getCost()) {
+                        // Deduct the cost from the score
+					player.equipItem(item1);
+					item1.buyItem(item1, game);
                 }
             }
+
             window.clear();
-            window.draw(backgroundSprite);
-            texts.drawInGameTexts(&window, score, upgradeCost, mousePower);
-			window.draw(buttonSprite);
-			window.draw(gumballSprite);
+
+            if (isMainScene) {
+                loadTexturesMain();
+                window.draw(backgroundSprite);
+                textsMain.drawInGameTextsMain(&window, game.getScore(), game.getUpgradeCost(), player.getMousePower());
+                window.draw(upgradeButtonSprite);
+				window.draw(shopButtonEnterSprite);
+                window.draw(gumballSprite);
+            }
+            else if (isShopScene) {
+                loadTexturesShop();
+                window.draw(backgroundShopSprite);
+                window.draw(shopButtonLeaveSprite);
+                window.draw(item1.getSprite());
+            }
+
             window.display();
         }
     }
