@@ -27,7 +27,7 @@ private:
 	Texts texts;
 
 	// Function for loading background
-	bool loadTextures();
+	bool loadTextures1();
 public:
 	// Constructor
 	Game();

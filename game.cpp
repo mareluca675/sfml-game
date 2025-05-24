@@ -6,7 +6,7 @@ Game::Game() {
 	upgradeCost = 1.0f;
 }
 
-bool Game::loadTextures() {
+bool Game::loadTextures1() {
     if (!backgroundTexture.loadFromFile("textures/background.png")) {
         std::cerr << "ERROR: Could not load backround image.";
         return false;
@@ -37,7 +37,7 @@ bool Game::loadTextures() {
 
 bool Game::performSetup() {
     texts = Texts();
-    return loadTextures() && texts.perfromSetup();
+    return loadTextures1() && texts.perfromSetup();
 }
 
 bool Game::runGame() {
@@ -74,7 +74,6 @@ bool Game::runGame() {
                     score = std::round(score * 100.0f) / 100.0f;
                 }
             }
-
             window.clear();
             window.draw(backgroundSprite);
             texts.drawInGameTexts(&window, score, upgradeCost, mousePower);
