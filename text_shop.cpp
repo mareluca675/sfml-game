@@ -41,13 +41,13 @@ bool TextsShop::perfromSetupShop() {
 	return true;
 }
 
-void TextsShop::drawInGameTextsShop(sf::RenderWindow* window, float score, float upgradeCost, float mousePower) {
-	//item1.setString("Score: " );
-	window->draw(item1);
-	//item1Cost.setString("Upgrade Cost: " );
+void TextsShop::drawInGameTextsShop(sf::RenderWindow* window, std::string item1Name, float item1Coost, std::string item2Name, float item2Coost) {
+	item1.setString("Item Name: " + item1Name);
+	window-> draw(item1);
+	item1Cost.setString("Item Price: " + formatFloatShop(item1Coost));
 	window->draw(item1Cost);
-	//item2.setString("Mouse Power: ");
+	item2.setString("Item Name: " + item2Name);
 	window->draw(item2);
-	//item2Cost.setString("rebe sa mearga: ");
+	item1Cost.setString("Item Price: " + formatFloatShop(item2Coost));
 	window->draw(item2Cost);
 }

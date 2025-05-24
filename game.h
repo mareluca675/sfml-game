@@ -41,13 +41,6 @@ private:
 	// Bacground Shop
 	sf::Texture backgroundShopTexture;
 	sf::Sprite backgroundShopSprite;
-	// Item1 Texture
-	sf::Texture item1Texture;
-	sf::Sprite item1Sprite;
-
-	// Item2 Texture
-	sf::Texture item2Texture;
-	sf::Sprite item2Sprite;
 
 	// Texts for main scene
 	TextsMain textsMain;
