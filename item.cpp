@@ -11,7 +11,3 @@ Item::Item(float _cost, const std::string _name, const std::string texturePath) 
 
 	sprite.setTexture(texture);
 }
-
-void Item::buyItem(Item &item, Game &game) {
-	game.setScore(game.getScore() - item.getCost());
-}

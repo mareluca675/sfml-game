@@ -3,20 +3,14 @@
 #include <cmath>
 #include <iomanip>
 #include <sstream>
-
 #include "game.h"
 
 int main() {
-	Game world = Game();
+	Game game = Game();
 
     // Main loop
     while (true) {
-        if(!world.performSetupMain()) {
-			std::cout << "ERROR: Couldn't perfrom setup.";
-			return 1;
-		}
-
-		if (!world.runGame()) {
+		if (!game.runGame()) {
 			return 0;
 		}
     }
