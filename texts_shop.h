@@ -8,11 +8,11 @@
 class TextsShop {
 private:
 	sf::Font font;
-	void setUpTextShop(sf::Text*, sf::Vector2f);
+	void setUpTextShop(sf::Text*, sf::Vector2f,int siize);
 public:
 	TextsShop() = default;
 	bool perfromSetupTextShop(std::vector<Item>);
-	void drawInGameTextsShop(sf::RenderWindow*, std::vector<Item>, float, float);
+	void drawInGameTextsShop(sf::RenderWindow*, std::vector<Item>, float, float, float);
 };
 
 #endif

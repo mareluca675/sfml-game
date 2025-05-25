@@ -12,5 +12,5 @@ void Player::buyItem(Item item) {
 	criticalChance += item.getCriticalChance();
 	item.setCost(item.getCost() * 1.33f);
 	item.setMousePower(item.getMousePower() * 1.33f);
-	item.setCriticalChance(item.getCriticalChance() * 1.15f);
+	item.setCriticalChance(item.getCriticalChance() + item.getCriticalChance() * 0.15f);
 }

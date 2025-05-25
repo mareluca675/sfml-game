@@ -6,38 +6,29 @@
 
 class Item {
 private:
-	// Item properties
     std::string name;
-    sf::Texture texture; 
-    sf::Sprite sprite;
+    sf::Texture texture;
+    sf::Sprite sprite;  // Changed from sf::Sprite& to sf::Sprite
     float cost;
-	float mousePower;
-	float criticalChance;
+    float mousePower;
+    float criticalChance;
 public:
-	// Constructor
-	Item() = default;
-    Item(float cost, const std::string, const std::string);
+    // Constructors
+    Item() = default;
+    Item(float cost, const std::string name, sf::Texture&& texture, float mousePower, float criticalChance);
 
     // Getters
-    std::string getName() { return name; }
-    float getCost() { return cost; }
-	float getMousePower() const { return mousePower; }
-	float getCriticalChance() const { return criticalChance; }
+    const std::string& getName() const { return name; }
+    float getCost() const { return cost; }
+    float getMousePower() const { return mousePower; }
+    float getCriticalChance() const { return criticalChance; }
     sf::Sprite& getSprite() { return sprite; }
-	sf::Texture getTexture() const { return texture; }
 
-	// Setters
-	void setName(const std::string& newName) { name = newName; }
-	void setCost(float newCost) { cost = newCost; }
-	void setTexture(const std::string& texturePath) {
-		if (!texture.loadFromFile(texturePath)) {
-			std::cerr << "ERROR: Could not load texture for item: " << name << std::endl;
-		}
-
-		sprite.setTexture(texture);
-	}
-	void setMousePower(float power) { mousePower = power; }
-	void setCriticalChance(float chance) { criticalChance = chance; }
+    // Setters
+    void setName(const std::string& newName) { name = newName; }
+    void setCost(float newCost) { cost = newCost; }
+    void setMousePower(float power) { mousePower = power; }
+    void setCriticalChance(float chance) { criticalChance = chance; }
 };
 
 #endif

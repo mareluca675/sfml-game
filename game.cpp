@@ -9,17 +9,17 @@ Game::Game() {
 }
 
 bool Game::loadTexturesMain() {
-    if (!backgroundTexture.loadFromFile("textures/newbackground.png")) {
+    if (!backgroundTexture.loadFromFile("textures/background_main.png")) {
         std::cerr << "ERROR: Could not load backround image.";
         return false;
     }
 
-    if (!upgradeButtonTexture.loadFromFile("textures/upgradeButton.png")) {
+    if (!upgradeButtonTexture.loadFromFile("textures/upgrade_button.png")) {
         std::cerr << "ERROR: Could not load button image.";
         return false;
     }
 
-	if (!shopButtonEnterTexture.loadFromFile("textures/Shop.png")) {
+	if (!shopButtonEnterTexture.loadFromFile("textures/shop.png")) {
 		std::cerr << "ERROR: Could not load shop image.";
 		return false;
 	}
@@ -31,7 +31,7 @@ bool Game::loadTexturesMain() {
 
     // Set the texture rect for the button sprite
     upgradeButtonSprite.setTexture(upgradeButtonTexture);
-    upgradeButtonSprite.setPosition(25.0f, 50.0f);
+    upgradeButtonSprite.setPosition(25.0f, 60.0f);
 
     // Set the texture rect for the gumball sprite
     gumballSprite.setTexture(gumballTexture);
@@ -47,7 +47,7 @@ bool Game::loadTexturesMain() {
 }
 
 bool Game::loadTexturesShop() {
-    if (!backgroundShopTexture.loadFromFile("textures/backgroundShop.png")) {
+    if (!backgroundShopTexture.loadFromFile("textures/background_shop.png")) {
         std::cerr << "ERROR: Could not load shop image.";
         return false;
     }
@@ -67,10 +67,20 @@ bool Game::runGame() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "GumbaLL");
 	Game game;
     Player player;
-	std::vector<Item> items;
 
-     // RMT
-	items.push_back(Item(10.0f, "RMT", "textures/rmt.png"));
+    sf::Texture rmtTexture;
+    sf::Texture bananaTexture;
+
+    if (!rmtTexture.loadFromFile("textures/rmt.png")) {
+        std::cerr << "Failed to load RMT texture\n";
+    }
+    if (!bananaTexture.loadFromFile("textures/bananas.png")) {
+        std::cerr << "Failed to load BANANAS texture\n";
+    }
+
+    std::vector<Item> items;
+    items.emplace_back(10.0f, "RMT", std::move(rmtTexture), 2, 0);
+    items.emplace_back(20.0f, "BANANAS", std::move(bananaTexture), 0, 0.02);
 
     textsMain = TextsMain();
     if (!(loadTexturesMain() && textsMain.perfromSetupMain())) {
@@ -111,8 +121,16 @@ bool Game::runGame() {
                 }
                 if (isMainScene && gumballSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
                     // Increment score by mousePower
-                    player.setScore(player.getScore() + player.getMousePower());
-                    player.setScore(std::round(player.getScore() * 100.0f) / 100.0f);
+					if (player.getCriticalChance() > static_cast<float>(rand() % 100) / 100.0f) {
+                        player.setScore(player.getScore() + player.getMousePower() * 2);// Critical hit
+                        player.setScore(std::round(player.getScore() * 100.0f) / 100.0f);
+                        //reset srand
+						srand(static_cast<unsigned int>(time(0))); // Reset the random seed
+					}
+                    else {
+                        player.setScore(player.getScore() + player.getMousePower());
+                        player.setScore(std::round(player.getScore() * 100.0f) / 100.0f);
+                    }
                 }
                 else if (isMainScene && !isShopScene && shopButtonEnterSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
                     isMainScene = 0;
@@ -122,25 +140,47 @@ bool Game::runGame() {
                     isMainScene = 1;
                     isShopScene = 0;
                 }
+                else if (!isMainScene && isShopScene && items[0].getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)))
+                {
+					if (player.getScore() >= items[0].getCost()) {
+						player.setScore(player.getScore() - items[0].getCost());
+						player.setScore(std::round(player.getScore() * 100.0f) / 100.0f);
+						player.setMousePower(player.getMousePower() + items[0].getMousePower());
+						player.setMousePower(std::round(player.getMousePower() * 100.0f) / 100.0f);
+					}
+				}
+                else if (!isMainScene && isShopScene && items[1].getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)))
+                {
+                    if (player.getScore() >= items[1].getCost()) {
+                        player.setScore(player.getScore() - items[1].getCost());
+                        player.setScore(std::round(player.getScore() * 100.0f) / 100.0f);
+                        player.setCriticalChance(player.getCriticalChance() + items[1].getCriticalChance());
+                        player.setCriticalChance(std::round(player.getCriticalChance() * 100.0f) / 100.0f);
+                    }
+                }
             }
-
             window.clear();
-
 			if (isMainScene) {
 				// Draw main scene
 				window.draw(backgroundSprite);
 				window.draw(gumballSprite);
 				window.draw(upgradeButtonSprite);
 				window.draw(shopButtonEnterSprite);
-				textsMain.drawInGameTextsMain(&window, player.getScore(), game.getUpgradeCost(), player.getMousePower());
+				textsMain.drawInGameTextsMain(&window, player.getScore(), game.getUpgradeCost(), player.getMousePower(), player.getCriticalChance());
 			}
-			else if (isShopScene) {
-				// Draw shop scene
-				window.draw(backgroundShopSprite);
-				window.draw(shopButtonLeaveSprite);
-				textsShop.drawInGameTextsShop(&window, items, player.getScore(), player.getMousePower());
-			}
-
+            else {
+                window.draw(backgroundShopSprite);
+                window.draw(shopButtonLeaveSprite);
+                textsShop.drawInGameTextsShop(&window, items, player.getScore(), player.getMousePower(), player.getCriticalChance());
+                for (size_t i = 0; i < items.size(); ++i) {
+                    sf::Sprite& sprite = items[i].getSprite();
+					if (i == 1)
+						sprite.setPosition(450.0f + i * 250.0f, 400.0f);// banana
+					else
+                    sprite.setPosition(450.0f + i * 250.0f, 360.0f);
+                    window.draw(sprite);
+                }
+            }
             window.display();
         }
     }
