@@ -11,7 +11,7 @@ private:
 	float criticalChance;
 public:
 	Player();
-	void buyItem(Item);
+	void buyItem(Item&);
 
 	// Setters
 	void setScore(float newScore) { score = newScore; }

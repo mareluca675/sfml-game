@@ -30,6 +30,8 @@ public:
     void setCost(float newCost) { cost = newCost; }
     void setMousePower(float power) { mousePower = power; }
     void setCriticalChance(float chance) { criticalChance = chance; }
+	void setSprite(const sf::Sprite& newSprite) { sprite = newSprite; }
+	void setTexture(const sf::Texture& newTexture) { texture = newTexture; sprite.setTexture(texture); }
 };
 
 #endif

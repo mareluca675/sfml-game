@@ -1,6 +1,7 @@
 #include "texts_main.h"
 #include "texts_shop.h"
 #include "item.h"
+#include "player.h"
 
 #include <iostream>
 #include <vector>
@@ -57,6 +58,7 @@ private:
 	bool loadTexturesMain();
 	bool loadTexturesShop();
 	
+	// Upgrade level
 	int level = 1;
 public:
 	// Constructor
@@ -67,11 +69,26 @@ public:
 	float getUpgradeCost() const { return upgradeCost; }
 	void setUpgradeCost(float newUpgradeCost) { upgradeCost = newUpgradeCost; }
 
+	// Function to get items
+	std::vector<Item> getItems();
+
 	// Getters for level variable
-	float getLevel() const { return level; }
+	int getLevel() const { return level; }
 	void setLevel(int newLevel) { level = newLevel; }
 	bool getIsMainScene() const { return isMainScene; }
 	bool getIsShopScene() const { return isShopScene; }
+
+	// Function for upgrading
+	void upgradeMousePower(sf::RenderWindow&, Player&);
+
+	// Function for drawing main scene
+	void drawMainScene(sf::RenderWindow&, Player&);
+
+	// Function for drawing shop scene
+	void drawShopScene(sf::RenderWindow&, Player&, std::vector<Item>&);
+
+	// Function for gaining score
+	void gainScore(Player& player);
 };
 
 #endif

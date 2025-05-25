@@ -63,36 +63,145 @@ bool Game::loadTexturesShop() {
     return true;
 }
 
-bool Game::runGame() {
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "GumbaLL");
-	Game game;
-    Player player;
+std::vector<Item> Game::getItems() {
+	std::vector<Item> items;
 
+	// Textures for items
     sf::Texture rmtTexture;
-    sf::Texture bananaTexture;
+	sf::Texture bananaTexture;
+	sf::Texture rubberDuckTexture;
 
     if (!rmtTexture.loadFromFile("textures/rmt.png")) {
-        std::cerr << "Failed to load RMT texture\n";
-    }
-    if (!bananaTexture.loadFromFile("textures/bananas.png")) {
-        std::cerr << "Failed to load BANANAS texture\n";
+        std::cerr << "Failed to load RMT texture.";
+		return std::vector<Item>(); // Return empty vector on failure
     }
 
-    std::vector<Item> items;
-    items.emplace_back(10.0f, "RMT", std::move(rmtTexture), 2.0f, 0.0f);
-    items.emplace_back(20.0f, "BANANAS", std::move(bananaTexture), 0.0f, 0.005f);
+    if (!bananaTexture.loadFromFile("textures/bananas.png")) {
+        std::cerr << "Failed to load BANANAS texture.";
+        return std::vector<Item>(); // Return empty vector on failure
+    }
+
+	if (!rubberDuckTexture.loadFromFile("textures/rubber_duck.png")) {
+		std::cerr << "Failed to load Rubber Duck texture.";
+		return std::vector<Item>(); // Return empty vector on failure
+	}
+
+	// Create items with textures and properties
+	Item rmt(1.0f, "RMT", std::move(rmtTexture), 0.1f, 0.0f);
+	rmt.setTexture(rmtTexture); // Set texture for RMT item
+
+	Item banana(1.0f, "Banana", std::move(bananaTexture), 0.2f, 0.0f);
+	banana.setTexture(bananaTexture); // Set texture for Banana item
+
+	Item rubberDuck(1.0f, "Rubber Duck", std::move(rubberDuckTexture), 0.3f, 0.0f);
+	rubberDuck.setTexture(rubberDuckTexture); // Set texture for Rubber Duck item
+
+	// Add items to the vector
+	items.push_back(rmt);
+	items.push_back(banana);
+	items.push_back(rubberDuck);
 
     textsMain = TextsMain();
     if (!(loadTexturesMain() && textsMain.perfromSetupMain())) {
         std::cout << "ERROR: Couldn't perfrom main scene setup.";
-        return 1;
+        return std::vector<Item>();
     }
 
     textsShop = TextsShop();
     if (!(loadTexturesShop() && textsShop.perfromSetupTextShop(items))) {
         std::cout << "ERROR: Couldn't perfrom shop scene setup.";
-        return 1;
+        return std::vector<Item>();
     }
+
+    return items;
+}
+
+void Game::drawMainScene(sf::RenderWindow &window, Player &player) {
+    // Draw main scene
+    window.draw(backgroundSprite);
+    window.draw(gumballSprite);
+    window.draw(upgradeButtonSprite);
+    window.draw(shopButtonEnterSprite);
+    textsMain.drawInGameTextsMain(&window, player.getScore(), getUpgradeCost(), player.getMousePower(), player.getCriticalChance(), level);
+}
+
+void Game::drawShopScene(sf::RenderWindow &window, Player &player, std::vector<Item> &items) {
+    window.draw(backgroundShopSprite);
+    window.draw(shopButtonLeaveSprite);
+
+    int index = 0;
+    for (Item &item : items) {
+        item.getSprite().setPosition(150.0f + index * 250.0f, 250.0f);
+        window.draw(item.getSprite());
+        ++index;
+    }
+
+    textsShop.drawInGameTextsShop(&window, items, player.getScore(), player.getMousePower(), player.getCriticalChance());
+}
+
+// Upgrade mouse power function
+void Game::upgradeMousePower(sf::RenderWindow& window, Player& player) {
+    // Check if player has enough score to upgrade
+    if (player.getScore() >= getUpgradeCost()) {
+        // Deduct score
+        player.setScore(player.getScore() - getUpgradeCost());
+        player.setScore(std::round(player.getScore() * 100.0f) / 100.0f);
+
+        // Increase mouse power
+        player.setMousePower(player.getMousePower() + player.getMousePower() * UPGRADE_CONSTANT);
+        player.setMousePower(std::round(player.getMousePower() * 100.0f) / 100.0f);
+
+        // Update upgrade cost
+        upgradeCost = std::ceil(getUpgradeCost() + 1.755f * getUpgradeCost() * UPGRADE_CONSTANT);
+
+        // Increase level
+        ++level;
+    }
+    else {
+        // Not enough score, show message for half a second
+        textsMain.upgrade.setString("Not enough score");
+
+        // Wait half a second
+        sf::Clock clock;
+        while (clock.getElapsedTime().asSeconds() < 0.5f) {
+            window.clear();
+            drawMainScene(window, player);
+            window.display();
+        }
+
+        // Reset upgrade text
+        textsMain.upgrade.setString("Upgrade");
+    }
+}
+
+void Game::gainScore(Player &player) {
+    // Increment score by mousePower
+    if (player.getCriticalChance() > static_cast<float>(rand() % 100) / 100.0f) {
+        player.setScore(player.getScore() + player.getMousePower() * 2);// Critical hit
+        player.setScore(std::round(player.getScore() * 100.0f) / 100.0f);
+        srand(static_cast<unsigned int>(time(0))); // Reset the random seed
+    }
+    else {
+        player.setScore(player.getScore() + player.getMousePower());
+        player.setScore(std::round(player.getScore() * 100.0f) / 100.0f);
+    }
+}
+
+bool Game::runGame() {
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Gumballicker");
+    Player player;
+    std::vector<Item> items = getItems();
+
+	// Display items for debbugging purposes
+	for (const auto& item : items) {
+		std::cout << "Item: " << item.getName() << ", Cost: " << item.getCost()
+			<< ", Mouse Power: " << item.getMousePower()
+			<< ", Critical Chance: " << item.getCriticalChance() << std::endl;
+	}
+
+	if (items.empty()) {
+		return false;
+	}
 
     while (window.isOpen()) {
         // Process events
@@ -109,84 +218,47 @@ bool Game::runGame() {
                 // Get mouse position relative to the window
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
-                // Check if the button was clicked
+                // Check if the upgrade button was clicked
                 if (isMainScene && upgradeButtonSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-                    if (player.getScore() >= game.getUpgradeCost()) {
-						// Deduct score, increase mouse power, and update upgrade cost
-                        player.setScore(player.getScore() - game.getUpgradeCost());
-                        player.setScore(std::round(player.getScore() * 100.0f) / 100.0f);
-                        player.setMousePower(player.getMousePower() + player.getMousePower() * UPGRADE_CONSTANT);
-                        player.setMousePower(std::round(player.getMousePower() * 100.0f) / 100.0f); // Round to 2 decimal places
-                        game.setUpgradeCost(std::ceil(game.getUpgradeCost() + 1.755f * game.getUpgradeCost() * UPGRADE_CONSTANT));
-                        // increase level
-						game.level++;
-                    }
+					// Upgrade mouse power
+                    upgradeMousePower(window, player);
                 }
+
+				// Check if gumball was clicked
                 if (isMainScene && gumballSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-                    // Increment score by mousePower
-					if (player.getCriticalChance() > static_cast<float>(rand() % 100) / 100.0f) {
-                        player.setScore(player.getScore() + player.getMousePower() * 2);// Critical hit
-                        player.setScore(std::round(player.getScore() * 100.0f) / 100.0f);
-						srand(static_cast<unsigned int>(time(0))); // Reset the random seed
-					}
-                    else {
-                        player.setScore(player.getScore() + player.getMousePower());
-                        player.setScore(std::round(player.getScore() * 100.0f) / 100.0f);
-                    }
-                }
-                else if (isMainScene && !isShopScene && shopButtonEnterSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+					// Gain score when gumball is clicked
+					gainScore(player);
+				}
+
+				// Check if shop button was clicked
+                if (isMainScene && shopButtonEnterSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
                     isMainScene = 0;
                     isShopScene = 1;
                 }
-                else if (!isMainScene && isShopScene && shopButtonLeaveSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                else if (isShopScene && shopButtonLeaveSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
                     isMainScene = 1;
                     isShopScene = 0;
                 }
-                else if (!isMainScene && isShopScene && items[0].getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)))
-                {
-					if (player.getScore() >= items[0].getCost()) {
-						player.setScore(player.getScore() - items[0].getCost());
-						player.setScore(std::round(player.getScore() * 100.0f) / 100.0f);
-						player.setMousePower(player.getMousePower() + items[0].getMousePower());
-						player.setMousePower(std::round(player.getMousePower() * 100.0f) / 100.0f);
-                        items[0].setCost(items[0].getCost() * 1.25);
-                        items[0].setMousePower(items[0].getMousePower() * 1.25f);
+
+				// Check if items were clicked using a for loop
+				for (size_t i = 0; i < items.size(); ++i) {
+					if (isShopScene && items[i].getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+						std::cout << "Item " << i << " clicked: " << items[i].getName() << std::endl;
+						player.buyItem(items[i]);
 					}
 				}
-                else if (!isMainScene && isShopScene && items[1].getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)))
-                {
-                    if (player.getScore() >= items[1].getCost()) {
-                        player.setScore(player.getScore() - items[1].getCost());
-                        player.setScore(std::round(player.getScore() * 100.0f) / 100.0f);
-                        player.setCriticalChance(player.getCriticalChance() + items[1].getCriticalChance());
-                        player.setCriticalChance(std::round(player.getCriticalChance() * 100.0f) / 100.0f);
-                        items[1].setCost(items[1].getCost() * 1.25f);
-                        items[1].setCriticalChance(items[1].getCriticalChance() + 0.005f);
-                    }
-                }
+
             }
+
             window.clear();
+
 			if (isMainScene) {
-				// Draw main scene
-				window.draw(backgroundSprite);
-				window.draw(gumballSprite);
-				window.draw(upgradeButtonSprite);
-				window.draw(shopButtonEnterSprite);
-				textsMain.drawInGameTextsMain(&window, player.getScore(), game.getUpgradeCost(), player.getMousePower(), player.getCriticalChance(), game.level);
+                drawMainScene(window, player);
 			}
             else {
-                window.draw(backgroundShopSprite);
-                window.draw(shopButtonLeaveSprite);
-                textsShop.drawInGameTextsShop(&window, items, player.getScore(), player.getMousePower(), player.getCriticalChance());
-                for (size_t i = 0; i < items.size(); ++i) {
-                    sf::Sprite& sprite = items[i].getSprite();
-					if (i == 1)
-						sprite.setPosition(450.0f + i * 250.0f, 400.0f);
-					else
-                    sprite.setPosition(450.0f + i * 250.0f, 360.0f);
-                    window.draw(sprite);
-                }
+				drawShopScene(window, player, items);
             }
+
             window.display();
         }
     }
