@@ -4,6 +4,7 @@
 #include <cstddef>      // for std::size_t
 #include <stdexcept>    // for std::runtime_error, std::out_of_range
 #include <iterator>     // for std::forward_iterator_tag
+#include "item.h"
 
 template<typename T>
 struct node {
@@ -21,13 +22,21 @@ public:
     List() = default;
     ~List() { clear(); }
 
-    // no copy/move for now
-    List(const List&) = delete;
-    List& operator=(const List&) = delete;
-
     // capacity
     bool        empty() const noexcept { return sz == 0; }
     std::size_t size()  const noexcept { return sz; }
+
+	// overwrite = operator
+	List& operator=(const List& other) {
+		if (this != &other) {
+			clear();
+			for (const auto& item : other) {
+				push_back(item);
+			}
+		}
+
+		return *this;
+	}
 
     // element access
     T& front() {

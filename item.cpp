@@ -1,9 +1,17 @@
 #include "item.h"
 #include "game.h"
 
-void Item::buyItem(Item &item, Game &game)
-{
+Item::Item(float _cost, const std::string _name, const std::string texturePath) {
+	cost = _cost;
+	name = _name;
+
+	if (!texture.loadFromFile(texturePath)) {
+		std::cerr << "ERROR: Could not load texture for item: " << name << std::endl;
+	}
+
+	sprite.setTexture(texture);
+}
+
+void Item::buyItem(Item &item, Game &game) {
 	game.setScore(game.getScore() - item.getCost());
-	item.setCost(item.getCost() * 1.5f);
-	item.setCriticalChance(item.getCriticalChance() + 0.5f);
 }

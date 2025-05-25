@@ -9,38 +9,46 @@
 
 class Item {
 private:
+	// Item properties
     std::string name;
-    float cost;
-    float mousePower;
-    float criticalChance;
     sf::Texture texture; 
     sf::Sprite sprite;
+    float cost;
 public:
-    Item() = default;
+	// Constructor
+    Item(float cost, const std::string, const std::string);
 
-    void setName(const std::string& n) { name = n; }
-    void setCost(float c) { cost = c; }
-    void setCriticalChance(float cc) { criticalChance = cc; }
+    // Getters
+    std::string getName() { return name; }
+    float getCost() { return cost; }
+    sf::Sprite& getSprite() { return sprite; }
 
-    void setTexture(const std::string& path) {
-        if (!texture.loadFromFile(path)) {
-            throw std::runtime_error("Could not load texture from " + path);
-        }
-        sprite.setTexture(texture); // important: set sprite's texture
-    }
+	// Setters
+	void setName(const std::string& newName) { name = newName; }
+	void setCost(float newCost) { cost = newCost; }
+	void setTexture(const std::string& texturePath) {
+		if (!texture.loadFromFile(texturePath)) {
+			std::cerr << "ERROR: Could not load texture for item: " << name << std::endl;
+		}
 
-    void setSpritePosition(float x, float y) {
-        sprite.setPosition(x, y);
-    }
-	//Getters
-	
-	std::string getName() const { return name; }
-	float getCost() const { return cost; }
-	float getMousePower() const { return mousePower; }
-	float getCriticalChance() const { return criticalChance; }
-    const sf::Sprite& getSprite() const { return sprite; }
+		sprite.setTexture(texture);
+	}
 
-    void buyItem(Item& item, Game& game);
-
+	// Function to buy an item
+    void buyItem(Item&, Game&);
 };
+
+class Book : public Item {
+private:
+    float criticalChance;
+public:
+	// Constructor
+	Book(float cost, const std::string name, const std::string texturePath, float criticalChance)
+		: Item(cost, name, texturePath), criticalChance(criticalChance) {}
+
+    // Getters and setters
+	float getCriticalChance() const { return criticalChance; }
+	void setCriticalChance(float chance) { criticalChance = chance; }
+};
+
 #endif

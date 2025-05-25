@@ -1,4 +1,4 @@
-﻿#include "texts_main.h"
+#include "texts_main.h"
 #include "game.h"
 
 #include <iostream>
@@ -13,10 +13,10 @@ std::string formatFloatShop(float value) {
 }
 
 TextsShop::TextsShop() {
-	item1.setString("ITEM 1");
-	item1Cost.setString("1.00");
-	item2.setString("ITEM 2");
-	item2Cost.setString("0.99");
+	// Go through the items in the shop and set up their text
+	for (const auto& item : itemsShop) {
+		
+	}
 }
 
 void TextsShop::setUpTextShop(sf::Text* text, sf::Vector2f position) {
@@ -33,25 +33,16 @@ bool TextsShop::perfromSetupShop() {
 		return false;
 	}
 
-	setUpTextShop(&item1, sf::Vector2f(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2));
-	setUpTextShop(&item1Cost, sf::Vector2f(WINDOW_WIDTH / 2 - 300.0f, WINDOW_HEIGHT / 2 - 200.0f));
-	setUpTextShop(&item2, sf::Vector2f(WINDOW_WIDTH / 2 - 300.0f, WINDOW_HEIGHT / 2));
-	setUpTextShop(&item2Cost, sf::Vector2f(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 200.0f));
-	
+	setUpTextShop(&item1, sf::Vector2f(10.0f, 10.0f));
+	setUpTextShop(&item1Cost, sf::Vector2f(10.0f, WINDOW_HEIGHT - 50.0f));
+
 	return true;
 }
 
-void TextsShop::drawInGameTextsShop(sf::RenderWindow* window, std::string item1Name, float item1Coost, std::string item2Name, float item2Coost) {
-	//perfromSetupShop(); // Ensure the setup is performed before drawing
-	item1.setString("Item Name: " + item1Name);
+void TextsShop::drawInGameTextsShop(sf::RenderWindow* window, float score, float upgradeCost, float mousePower) {
+	//item1.setString("Score: " );
 	window->draw(item1);
-
-	item1Cost.setString("Item Price: " + formatFloatShop(item1Coost));
+	//item1Cost.setString("Upgrade Cost: " );
 	window->draw(item1Cost);
-
-	item2.setString("Item Name: " + item2Name);
-	window->draw(item2);
-
-	item2Cost.setString("Item Price: " + formatFloatShop(item2Coost));
-	window->draw(item2Cost); // ✅ This was missing
+	//item2.setString("Mouse Power: ");
 }

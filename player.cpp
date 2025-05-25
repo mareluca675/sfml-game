@@ -7,6 +7,4 @@ Player::Player() {
 
 void Player::equipItem(Item item) {
 	equipment.push_back(item);
-	mousePower += item.getMousePower();
-	criticalChance += item.getCriticalChance();
 }

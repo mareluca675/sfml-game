@@ -1,13 +1,11 @@
 #include "game.h"
 #include "player.h"
 #include "item.h"
-
-
 Item item1;
 Item item2;
 Game::Game() {
-    upgradeCost = 1.0f;
-    score = 0.0f;
+	upgradeCost = 1.0f;
+	score = 0.0f;
     isMainScene = true;
     isShopScene = false;
 }
@@ -23,10 +21,10 @@ bool Game::loadTexturesMain() {
         return false;
     }
 
-    if (!shopButtonEnterTexture.loadFromFile("textures/Shop.png")) {
-        std::cerr << "ERROR: Could not load shop image.";
-        return false;
-    }
+	if (!shopButtonEnterTexture.loadFromFile("textures/Shop.png")) {
+		std::cerr << "ERROR: Could not load shop image.";
+		return false;
+	}
 
     if (!gumballTexture.loadFromFile("textures/gumball_pixel.png")) {
         std::cerr << "ERROR: Could not load gumball image.";
@@ -79,7 +77,7 @@ bool Game::performSetupShop() {
 
 bool Game::runGame() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "GumbaLL");
-    Game game;
+	Game game;
     try {
         item1.setTexture("textures/rmt.png");
     }
@@ -93,20 +91,8 @@ bool Game::runGame() {
     item1.setCriticalChance(0.5f);
     item1.setSpritePosition(WINDOW_WIDTH / 2.0f - 50, WINDOW_HEIGHT / 2.0f - 50);
 
-    try {
-        item2.setTexture("textures/usa.png");
-    }
-    catch (const std::exception& e) {
-        std::cerr << "ERROR: " << e.what() << std::endl;
-        return false;
-    }
-
-    item2.setName("usa");
-    item2.setCost(7.0f);
-    item2.setCriticalChance(0.3f);
-    item2.setSpritePosition(WINDOW_WIDTH / 2.0f - 200, WINDOW_HEIGHT / 2.0f - 200);
-
     Player player;
+    Item rmt(100.0f, "RMT", "textures/rmt.png");
 
     while (window.isOpen()) {
         // Process events
@@ -146,34 +132,29 @@ bool Game::runGame() {
                     isMainScene = 1;
                     isShopScene = 0;
                 }
-                else if (isShopScene && !isMainScene && item1.getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)) && game.getScore() >= item1.getCost()) {
-                    player.equipItem(item1);
-                    item1.buyItem(item1, game);
-				}
-				else if (isShopScene && !isMainScene && item2.getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)) && game.getScore() >= item2.getCost()) {
-					player.equipItem(item2);
-					item2.buyItem(item2, game);
-				}
+                else if (isShopScene && !isMainScene && rmt.getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)) && game.getScore() >= rmt.getCost()) {
+                        // Deduct the cost from the score
+					player.equipItem(rmt);
+					rmt.buyItem(rmt, game);
+                }
             }
+
             window.clear();
-            // Main game logic
+
             if (isMainScene) {
                 loadTexturesMain();
                 window.draw(backgroundSprite);
                 textsMain.drawInGameTextsMain(&window, game.getScore(), game.getUpgradeCost(), player.getMousePower());
                 window.draw(upgradeButtonSprite);
-                window.draw(shopButtonEnterSprite);
+				window.draw(shopButtonEnterSprite);
                 window.draw(gumballSprite);
             }
-            // Shop scene logic
             else if (isShopScene) {
                 loadTexturesShop();
-                textsShop.perfromSetupShop();
+                textsShop.drawInGameTextsShop(&window, item1.getName(), item1.getCost(), item2.getName(), item2.getCost());
                 window.draw(backgroundShopSprite);
                 window.draw(shopButtonLeaveSprite);
-                window.draw(item1.getSprite());
-                window.draw(item2.getSprite());
-                textsShop.drawInGameTextsShop(&window, item1.getName(), item1.getCost(), item2.getName(), item2.getCost());
+                window.draw(rmt.getSprite());
             }
 
             window.display();
