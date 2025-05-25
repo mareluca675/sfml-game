@@ -1,10 +1,7 @@
-#pragma once
 #ifndef ITEM_H
 #define ITEM_H
 
-
 #include <iostream>
-#include "game.h"
 #include <SFML/Graphics.hpp>
 
 class Item {
@@ -14,14 +11,20 @@ private:
     sf::Texture texture; 
     sf::Sprite sprite;
     float cost;
+	float mousePower;
+	float criticalChance;
 public:
 	// Constructor
+	Item() = default;
     Item(float cost, const std::string, const std::string);
 
     // Getters
     std::string getName() { return name; }
     float getCost() { return cost; }
+	float getMousePower() const { return mousePower; }
+	float getCriticalChance() const { return criticalChance; }
     sf::Sprite& getSprite() { return sprite; }
+	sf::Texture getTexture() const { return texture; }
 
 	// Setters
 	void setName(const std::string& newName) { name = newName; }
@@ -33,21 +36,7 @@ public:
 
 		sprite.setTexture(texture);
 	}
-
-	// Function to buy an item
-    void buyItem(Item&, Game&);
-};
-
-class Book : public Item {
-private:
-    float criticalChance;
-public:
-	// Constructor
-	Book(float cost, const std::string name, const std::string texturePath, float criticalChance)
-		: Item(cost, name, texturePath), criticalChance(criticalChance) {}
-
-    // Getters and setters
-	float getCriticalChance() const { return criticalChance; }
+	void setMousePower(float power) { mousePower = power; }
 	void setCriticalChance(float chance) { criticalChance = chance; }
 };
 

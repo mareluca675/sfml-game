@@ -1,6 +1,9 @@
 #include "texts_main.h"
 #include "texts_shop.h"
+#include "item.h"
+
 #include <iostream>
+#include <vector>
 
 #ifndef GAME_H
 #define GAME_H
@@ -14,11 +17,9 @@ const unsigned int FRAME_RATE_LIMIT = 60;
 class Game {
 private:
 	// Game variables
-	float score;
 	float upgradeCost;
-	// SFML objects
 
-	// Backround
+	// Background
 	sf::Texture backgroundTexture;
 	sf::Sprite backgroundSprite;
 
@@ -38,7 +39,7 @@ private:
 	sf::Texture shopButtonLeaveTexture;
 	sf::Sprite shopButtonLeaveSprite;
 
-	// Bacground Shop
+	// Background Shop
 	sf::Texture backgroundShopTexture;
 	sf::Sprite backgroundShopSprite;
 
@@ -59,16 +60,14 @@ public:
 	// Constructor
 	Game();
 	bool runGame();
-	bool performSetupMain();
-	bool performSetupShop();
-	
-	// Getter and Setter for score
-	float getScore() const { return score; }
-	void setScore(float newScore) { score = newScore; }
+
 	// Getter and Setter for upgradeCost	
 	float getUpgradeCost() const { return upgradeCost; }
 	void setUpgradeCost(float newUpgradeCost) { upgradeCost = newUpgradeCost; }
 
+	// Getters
+	bool getIsMainScene() const { return isMainScene; }
+	bool getIsShopScene() const { return isShopScene; }
 };
 
 #endif

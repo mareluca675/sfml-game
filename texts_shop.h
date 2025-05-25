@@ -1,38 +1,18 @@
-#include <SFML/Graphics.hpp>
-#include "list.hpp"
-#include "item.h"
-
 #ifndef TEXTS_SHOP_H
 #define TEXTS_SHOP_H
+
+#include <SFML/Graphics.hpp>
+#include <vector>
+#include "item.h"
 
 class TextsShop {
 private:
 	sf::Font font;
 	void setUpTextShop(sf::Text*, sf::Vector2f);
 public:
-	TextsShop();
-	List<Item> itemsShop;
-
-	List<std::string> itemsShopNames = {
-		"RMT",
-		"Book of Critical Chance",
-		"Mouse Power Upgrade"
-	};
-
-	List<float> itemsShopCosts = {
-		100.0f, // RMT
-		200.0f, // Book of Critical Chance
-		300.0f  // Mouse Power Upgrade
-	};
-
-	List<std::string> itemsShopTextures = {
-		"textures/rmt.png",
-		"textures/book.png",
-		"textures/mouse_power_upgrade.png"
-	};
-	
-	bool perfromSetupShop();
-	void drawInGameTextsShop(sf::RenderWindow* window, std::string item1Name, float item1Cost, std::string item2Name, float item2Cost);
+	TextsShop() = default;
+	bool perfromSetupTextShop(std::vector<Item>);
+	void drawInGameTextsShop(sf::RenderWindow*, std::vector<Item>, float, float);
 };
 
 #endif

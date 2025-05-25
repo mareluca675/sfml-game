@@ -1,5 +1,5 @@
-#include "texts_main.h"
-#include "game.h"
+#include "texts_shop.h"
+#include "item.h"
 
 #include <iostream>
 #include <sstream>
@@ -12,13 +12,6 @@ std::string formatFloatShop(float value) {
 	return out.str();
 }
 
-TextsShop::TextsShop() {
-	// Go through the items in the shop and set up their text
-	for (const auto& item : itemsShop) {
-		
-	}
-}
-
 void TextsShop::setUpTextShop(sf::Text* text, sf::Vector2f position) {
 	text->setFont(font);
 	text->setCharacterSize(24);
@@ -27,22 +20,40 @@ void TextsShop::setUpTextShop(sf::Text* text, sf::Vector2f position) {
 	text->setPosition(position);
 }
 
-bool TextsShop::perfromSetupShop() {
+bool TextsShop::perfromSetupTextShop(std::vector<Item> items) {
 	if (!font.loadFromFile("fonts/arial.ttf")) {
 		std::cout << "ERROR: Could not load font.\n";
 		return false;
 	}
 
-	setUpTextShop(&item1, sf::Vector2f(10.0f, 10.0f));
-	setUpTextShop(&item1Cost, sf::Vector2f(10.0f, WINDOW_HEIGHT - 50.0f));
+	// Draw cost / name of each item on the screen
+	for (size_t i = 0; i < items.size(); ++i) {
+		sf::Text itemText;
+		setUpTextShop(&itemText, sf::Vector2f(10.0f, 50.0f + i * 30.0f));
+		itemText.setString(items[i].getName() + " - Cost: " + formatFloatShop(items[i].getCost()));
+	}
 
-	return true;
+	return true;  
 }
 
-void TextsShop::drawInGameTextsShop(sf::RenderWindow* window, float score, float upgradeCost, float mousePower) {
-	//item1.setString("Score: " );
-	window->draw(item1);
-	//item1Cost.setString("Upgrade Cost: " );
-	window->draw(item1Cost);
-	//item2.setString("Mouse Power: ");
+void TextsShop::drawInGameTextsShop(sf::RenderWindow* window, std::vector<Item> items, float score, float mousePower) {
+	// Draw the score and mouse power in the shop scene
+	sf::Text scoreText;
+	setUpTextShop(&scoreText, sf::Vector2f(10.0f, 10.0f));
+	scoreText.setString("Score: " + formatFloatShop(score));
+	window->draw(scoreText);
+
+	// Draw the mouse power in the shop scene
+	sf::Text mousePowerText;
+	setUpTextShop(&mousePowerText, sf::Vector2f(10.0f, 40.0f));
+	mousePowerText.setString("Mouse Power: " + formatFloatShop(mousePower));
+	window->draw(mousePowerText);
+
+	// Draw the items in the shop scene
+	for (size_t i = 0; i < items.size(); ++i) {
+		sf::Text itemText;
+		setUpTextShop(&itemText, sf::Vector2f(10.0f, 50.0f + i * 30.0f));
+		itemText.setString(items[i].getName() + " - Cost: " + formatFloatShop(items[i].getCost()));
+		window->draw(itemText);
+	}
 }

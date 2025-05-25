@@ -1,5 +1,5 @@
-// list.hpp
-#pragma once
+#ifndef LIST_HPP
+#define LIST_HPP
 
 #include <cstddef>      // for std::size_t
 #include <stdexcept>    // for std::runtime_error, std::out_of_range
@@ -11,9 +11,8 @@ struct node {
     T       info;
     node* next = nullptr;
 
-    node(const T& v, node* n = nullptr)
-        : info(v), next(n) {
-    }
+    node(const T& v, node* n = nullptr) : info(v), next(n) {}
+    node(T&& v, node* n = nullptr) : info(std::move(v)), next(n) {} // Added move constructor
 };
 
 template<typename T>
@@ -26,17 +25,21 @@ public:
     bool        empty() const noexcept { return sz == 0; }
     std::size_t size()  const noexcept { return sz; }
 
-	// overwrite = operator
-	List& operator=(const List& other) {
-		if (this != &other) {
-			clear();
-			for (const auto& item : other) {
-				push_back(item);
-			}
-		}
+    List(std::initializer_list<T> init) {
+        for (const auto& item : init) {
+            push_back(item);
+        }
+    }
 
-		return *this;
-	}
+    List& operator=(const List& other) {
+        if (this != &other) {
+            clear();
+            for (const auto& item : other) {
+                push_back(item);
+            }
+        }
+        return *this;
+    }
 
     // element access
     T& front() {
@@ -57,7 +60,6 @@ public:
         return tail->info;
     }
 
-    // at() with bounds check
     T& at(std::size_t index) {
         return const_cast<T&>(std::as_const(*this).at(index));
     }
@@ -73,19 +75,18 @@ public:
         return cur->info;
     }
 
-    // operator[] as alias to at() (no performance difference)
     T& operator[](std::size_t idx) { return at(idx); }
     const T& operator[](std::size_t idx) const { return at(idx); }
 
     // modifiers
-    void push_front(const T& value) {
-        head = new node<T>(value, head);
+    void push_front(T value) {
+        head = new node<T>(std::move(value), head); // Use move
         if (!tail) tail = head;
         ++sz;
     }
 
-    void push_back(const T& value) {
-        node<T>* n = new node<T>(value);
+    void push_back(T value) {
+        node<T>* n = new node<T>(std::move(value)); // Use move
         if (!head) {
             head = tail = n;
         }
@@ -99,7 +100,7 @@ public:
     T pop_front() {
         ensure_not_empty("List::pop_front");
         node<T>* old = head;
-        T val = head->info;
+        T val = std::move(head->info); // Use move
         head = head->next;
         delete old;
         if (!head) tail = nullptr;
@@ -109,20 +110,18 @@ public:
 
     T pop_back() {
         ensure_not_empty("List::pop_back");
-        // single element
         if (head == tail) {
-            T val = tail->info;
+            T val = std::move(tail->info); // Use move
             delete head;
             head = tail = nullptr;
             sz = 0;
             return val;
         }
-        // find penultimate
         node<T>* cur = head;
         while (cur->next != tail) {
             cur = cur->next;
         }
-        T val = tail->info;
+        T val = std::move(tail->info); // Use move
         delete tail;
         tail = cur;
         tail->next = nullptr;
@@ -170,7 +169,6 @@ public:
 
     iterator begin()       noexcept { return iterator(head); }
     iterator end()         noexcept { return iterator(nullptr); }
-    // const_iterators omitted for brevity...
 
 private:
     node<T>* head = nullptr;
@@ -183,3 +181,5 @@ private:
         }
     }
 };
+
+#endif // !LIST_HPP
