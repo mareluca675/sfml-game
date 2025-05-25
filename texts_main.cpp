@@ -20,14 +20,14 @@ TextsMain::TextsMain() {
 
 void TextsMain::setUpTextMain(sf::Text* text, sf::Vector2f position) {
 	text->setFont(font);
-	text->setCharacterSize(24);
+	text->setCharacterSize(40);
 	text->setFillColor(sf::Color::White);
 	text->setStyle(sf::Text::Bold);
 	text->setPosition(position);
 }
 
 bool TextsMain::perfromSetupMain() {
-	if (!font.loadFromFile("fonts/arial.ttf")) {
+	if (!font.loadFromFile("fonts/pixel.ttf")) {
 		std::cout << "ERROR: Could not load font.\n";
 		return false;
 	}
