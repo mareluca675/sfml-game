@@ -1,7 +1,8 @@
 #include "game.h"
 #include "player.h"
 #include "item.h"
-
+Item item1;
+Item item2;
 Game::Game() {
 	upgradeCost = 1.0f;
 	score = 0.0f;
@@ -15,7 +16,7 @@ bool Game::loadTexturesMain() {
         return false;
     }
 
-    if (!upgradeButtonTexture.loadFromFile("textures/button.png")) {
+    if (!upgradeButtonTexture.loadFromFile("textures/upgradeButton.png")) {
         std::cerr << "ERROR: Could not load button image.";
         return false;
     }
@@ -32,7 +33,7 @@ bool Game::loadTexturesMain() {
 
     // Set the texture rect for the button sprite
     upgradeButtonSprite.setTexture(upgradeButtonTexture);
-    upgradeButtonSprite.setPosition(0.0f, 50.0f);
+    upgradeButtonSprite.setPosition(25.0f, 50.0f);
 
     // Set the texture rect for the gumball sprite
     gumballSprite.setTexture(gumballTexture);
@@ -76,8 +77,20 @@ bool Game::performSetupShop() {
 
 bool Game::runGame() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "GumbaLL");
+	Game game;
+    try {
+        item1.setTexture("textures/rmt.png");
+    }
+    catch (const std::exception& e) {
+        std::cerr << "ERROR: " << e.what() << std::endl;
+        return false;
+    }
 
-    Game game;
+    item1.setName("carte");
+    item1.setCost(10.0f);
+    item1.setCriticalChance(0.5f);
+    item1.setSpritePosition(WINDOW_WIDTH / 2.0f - 50, WINDOW_HEIGHT / 2.0f - 50);
+
     Player player;
     Item rmt(100.0f, "RMT", "textures/rmt.png");
 
@@ -138,6 +151,7 @@ bool Game::runGame() {
             }
             else if (isShopScene) {
                 loadTexturesShop();
+                textsShop.drawInGameTextsShop(&window, item1.getName(), item1.getCost(), item2.getName(), item2.getCost());
                 window.draw(backgroundShopSprite);
                 window.draw(shopButtonLeaveSprite);
                 window.draw(rmt.getSprite());

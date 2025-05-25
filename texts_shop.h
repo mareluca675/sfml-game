@@ -32,7 +32,7 @@ public:
 	};
 	
 	bool perfromSetupShop();
-	void drawInGameTextsShop(sf::RenderWindow* window, float score, float upgradeCost, float mousePower);
+	void drawInGameTextsShop(sf::RenderWindow* window, std::string item1Name, float item1Cost, std::string item2Name, float item2Cost);
 };
 
 #endif
