@@ -6,8 +6,8 @@
 Item item1;
 Item item2;
 Game::Game() {
-	upgradeCost = 1.0f;
-	score = 0.0f;
+    upgradeCost = 1.0f;
+    score = 0.0f;
     isMainScene = true;
     isShopScene = false;
 }
@@ -23,10 +23,10 @@ bool Game::loadTexturesMain() {
         return false;
     }
 
-	if (!shopButtonEnterTexture.loadFromFile("textures/Shop.png")) {
-		std::cerr << "ERROR: Could not load shop image.";
-		return false;
-	}
+    if (!shopButtonEnterTexture.loadFromFile("textures/Shop.png")) {
+        std::cerr << "ERROR: Could not load shop image.";
+        return false;
+    }
 
     if (!gumballTexture.loadFromFile("textures/gumball_pixel.png")) {
         std::cerr << "ERROR: Could not load gumball image.";
@@ -79,8 +79,7 @@ bool Game::performSetupShop() {
 
 bool Game::runGame() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "GumbaLL");
-	Game game;
-
+    Game game;
     try {
         item1.setTexture("textures/rmt.png");
     }
@@ -148,28 +147,33 @@ bool Game::runGame() {
                     isShopScene = 0;
                 }
                 else if (isShopScene && !isMainScene && item1.getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)) && game.getScore() >= item1.getCost()) {
-                        // Deduct the cost from the score
-					player.equipItem(item1);
-					item1.buyItem(item1, game);
-                }
+                    player.equipItem(item1);
+                    item1.buyItem(item1, game);
+				}
+				else if (isShopScene && !isMainScene && item2.getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)) && game.getScore() >= item2.getCost()) {
+					player.equipItem(item2);
+					item2.buyItem(item2, game);
+				}
             }
-
             window.clear();
-
+            // Main game logic
             if (isMainScene) {
                 loadTexturesMain();
                 window.draw(backgroundSprite);
                 textsMain.drawInGameTextsMain(&window, game.getScore(), game.getUpgradeCost(), player.getMousePower());
                 window.draw(upgradeButtonSprite);
-				window.draw(shopButtonEnterSprite);
+                window.draw(shopButtonEnterSprite);
                 window.draw(gumballSprite);
             }
+            // Shop scene logic
             else if (isShopScene) {
                 loadTexturesShop();
-                textsShop.drawInGameTextsShop(&window, item1.getName(), item1.getCost(), item2.getName(), item2.getCost());
+                textsShop.perfromSetupShop();
                 window.draw(backgroundShopSprite);
                 window.draw(shopButtonLeaveSprite);
                 window.draw(item1.getSprite());
+                window.draw(item2.getSprite());
+                textsShop.drawInGameTextsShop(&window, item1.getName(), item1.getCost(), item2.getName(), item2.getCost());
             }
 
             window.display();

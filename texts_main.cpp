@@ -16,7 +16,6 @@ TextsMain::TextsMain() {
 	textScore.setString("0.00");
 	textUpgradeCost.setString("1.00");
 	textMousePower.setString("Mouse Power: 1.0");
-	fpsText.setString("FPS: 0");
 }
 
 void TextsMain::setUpTextMain(sf::Text* text, sf::Vector2f position) {
