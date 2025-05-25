@@ -13,10 +13,9 @@ std::string formatFloat(float value) {
 }
 
 TextsMain::TextsMain() {
-	textScore.setString("0.00");
-	textUpgradeCost.setString("1.00");
-	textMousePower.setString("Mouse Power: 1.0");
-	fpsText.setString("FPS: 0");
+	scoreText.setString("0.00");
+	upgradeCostText.setString("1.00");
+	mousePowerText.setString("Mouse Power: 1.0");
 }
 
 void TextsMain::setUpTextMain(sf::Text* text, sf::Vector2f position) {
@@ -33,19 +32,18 @@ bool TextsMain::perfromSetupMain() {
 		return false;
 	}
 
-	setUpTextMain(&textScore, sf::Vector2f(10.0f, 10.0f));
-	setUpTextMain(&textUpgradeCost, sf::Vector2f(10.0f, WINDOW_HEIGHT - 50.0f));
-	setUpTextMain(&textMousePower, sf::Vector2f(10.0f, WINDOW_HEIGHT - 80.0f));
-	setUpTextMain(&fpsText, sf::Vector2f(WINDOW_WIDTH - 100.0f, 10.0f));
+	setUpTextMain(&scoreText, sf::Vector2f(10.0f, 10.0f));
+	setUpTextMain(&upgradeCostText, sf::Vector2f(10.0f, WINDOW_HEIGHT - 50.0f));
+	setUpTextMain(&mousePowerText, sf::Vector2f(10.0f, WINDOW_HEIGHT - 80.0f));
 
 	return true;
 }
 
 void TextsMain::drawInGameTextsMain(sf::RenderWindow* window, float score, float upgradeCost, float mousePower) {
-	textScore.setString("Score: " + formatFloat(score));
-	window->draw(textScore);
-	textUpgradeCost.setString("Upgrade Cost: " + formatFloat(upgradeCost));
-	window->draw(textUpgradeCost);
-	textMousePower.setString("Mouse Power: " + formatFloat(mousePower));
-	window->draw(textMousePower);
+	scoreText.setString("Score: " + formatFloat(score));
+	window->draw(scoreText);
+	upgradeCostText.setString("Upgrade Cost: " + formatFloat(upgradeCost));
+	window->draw(upgradeCostText);
+	mousePowerText.setString("Mouse Power: " + formatFloat(mousePower));
+	window->draw(mousePowerText);
 }

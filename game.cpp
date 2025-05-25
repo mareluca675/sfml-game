@@ -1,7 +1,7 @@
 #include "game.h"
 #include "player.h"
 #include "item.h"
-Item item1;
+
 Game::Game() {
 	upgradeCost = 1.0f;
 	score = 0.0f;
@@ -76,21 +76,10 @@ bool Game::performSetupShop() {
 
 bool Game::runGame() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "GumbaLL");
-	Game game;
-    try {
-        item1.setTexture("textures/rmt.png");
-    }
-    catch (const std::exception& e) {
-        std::cerr << "ERROR: " << e.what() << std::endl;
-        return false;
-    }
 
-    item1.setName("carte");
-    item1.setCost(10.0f);
-    item1.setCriticalChance(0.5f);
-    item1.setSpritePosition(WINDOW_WIDTH / 2.0f - 50, WINDOW_HEIGHT / 2.0f - 50);
-
+    Game game;
     Player player;
+    Item rmt(100.0f, "RMT", "textures/rmt.png");
 
     while (window.isOpen()) {
         // Process events
@@ -130,10 +119,10 @@ bool Game::runGame() {
                     isMainScene = 1;
                     isShopScene = 0;
                 }
-                else if (isShopScene && !isMainScene && item1.getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)) && game.getScore() >= item1.getCost()) {
+                else if (isShopScene && !isMainScene && rmt.getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)) && game.getScore() >= rmt.getCost()) {
                         // Deduct the cost from the score
-					player.equipItem(item1);
-					item1.buyItem(item1, game);
+					player.equipItem(rmt);
+					rmt.buyItem(rmt, game);
                 }
             }
 
@@ -151,7 +140,7 @@ bool Game::runGame() {
                 loadTexturesShop();
                 window.draw(backgroundShopSprite);
                 window.draw(shopButtonLeaveSprite);
-                window.draw(item1.getSprite());
+                window.draw(rmt.getSprite());
             }
 
             window.display();

@@ -13,10 +13,10 @@ std::string formatFloatShop(float value) {
 }
 
 TextsShop::TextsShop() {
-	item1.setString("ITEM 1");
-	item1Cost.setString("1.00");
-	item2.setString("ITEM 2");
-	item2Cost.setString("0.99");
+	// Go through the items in the shop and set up their text
+	for (const auto& item : itemsShop) {
+		
+	}
 }
 
 void TextsShop::setUpTextShop(sf::Text* text, sf::Vector2f position) {
@@ -35,8 +35,6 @@ bool TextsShop::perfromSetupShop() {
 
 	setUpTextShop(&item1, sf::Vector2f(10.0f, 10.0f));
 	setUpTextShop(&item1Cost, sf::Vector2f(10.0f, WINDOW_HEIGHT - 50.0f));
-	setUpTextShop(&item2, sf::Vector2f(10.0f, WINDOW_HEIGHT - 80.0f));
-	setUpTextShop(&item2Cost, sf::Vector2f(WINDOW_WIDTH - 100.0f, 10.0f));
 
 	return true;
 }
@@ -47,7 +45,4 @@ void TextsShop::drawInGameTextsShop(sf::RenderWindow* window, float score, float
 	//item1Cost.setString("Upgrade Cost: " );
 	window->draw(item1Cost);
 	//item2.setString("Mouse Power: ");
-	window->draw(item2);
-	//item2Cost.setString("rebe sa mearga: ");
-	window->draw(item2Cost);
 }

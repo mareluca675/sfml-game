@@ -9,10 +9,9 @@ private:
 	void setUpTextMain(sf::Text*, sf::Vector2f);
 public:
 	TextsMain();
-	sf::Text textScore;
-	sf::Text textUpgradeCost;
-	sf::Text textMousePower;
-	sf::Text fpsText;
+	sf::Text scoreText;
+	sf::Text upgradeCostText;
+	sf::Text mousePowerText;
 	bool perfromSetupMain();
 	void drawInGameTextsMain(sf::RenderWindow* window, float score, float upgradeCost, float mousePower);
 };
