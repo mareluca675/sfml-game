@@ -56,6 +56,8 @@ private:
 	// Function for loading background
 	bool loadTexturesMain();
 	bool loadTexturesShop();
+	
+	int level = 1;
 public:
 	// Constructor
 	Game();
@@ -65,7 +67,9 @@ public:
 	float getUpgradeCost() const { return upgradeCost; }
 	void setUpgradeCost(float newUpgradeCost) { upgradeCost = newUpgradeCost; }
 
-	// Getters
+	// Getters for level variable
+	float getLevel() const { return level; }
+	void setLevel(int newLevel) { level = newLevel; }
 	bool getIsMainScene() const { return isMainScene; }
 	bool getIsShopScene() const { return isShopScene; }
 };

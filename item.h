@@ -23,6 +23,7 @@ public:
     float getMousePower() const { return mousePower; }
     float getCriticalChance() const { return criticalChance; }
     sf::Sprite& getSprite() { return sprite; }
+	sf::Texture getTexture() const { return texture; }
 
     // Setters
     void setName(const std::string& newName) { name = newName; }

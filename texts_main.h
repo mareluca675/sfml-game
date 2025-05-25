@@ -14,8 +14,9 @@ public:
 	sf::Text mousePowerText;
 	sf::Text criticalChance;
 	sf::Text upgrade;
+	sf::Text level;
 	bool perfromSetupMain();
-	void drawInGameTextsMain(sf::RenderWindow* window, float score, float upgradeCost, float mousePower, float criticalChance);
+	void drawInGameTextsMain(sf::RenderWindow* window, float score, float upgradeCost, float mousePower, float criticalChance, int level);
 };
 
 #endif

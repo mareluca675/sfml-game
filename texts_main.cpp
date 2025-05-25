@@ -18,6 +18,7 @@ TextsMain::TextsMain() {
 	mousePowerText.setString("Mouse Power: 1.0");
 	criticalChance.setString("Critical Chance: 0.00%");
 	upgrade.setString("Upgrade");
+	level.setString("Level: 1");
 }
 
 void TextsMain::setUpTextMain(sf::Text* text, sf::Vector2f position) {
@@ -38,11 +39,12 @@ bool TextsMain::perfromSetupMain() {
 	setUpTextMain(&upgradeCostText, sf::Vector2f(10.0f, WINDOW_HEIGHT - 50.0f));
 	setUpTextMain(&mousePowerText, sf::Vector2f(10.0f, WINDOW_HEIGHT - 80.0f));
 	setUpTextMain(&criticalChance, sf::Vector2f(10.0f, WINDOW_HEIGHT - 110.0f));
-	setUpTextMain(&upgrade, sf::Vector2f(10.0f, 150.0f));
+	setUpTextMain(&upgrade, sf::Vector2f(13.0f, 150.0f));
+	setUpTextMain(&level, sf::Vector2f(13.0f, 200.0f));
 	return true;
 }
 
-void TextsMain::drawInGameTextsMain(sf::RenderWindow* window, float score, float upgradeCost, float mousePower, float criticalChancee) {
+void TextsMain::drawInGameTextsMain(sf::RenderWindow* window, float score, float upgradeCost, float mousePower, float criticalChancee, int levell) {
 	scoreText.setString("Score: " + formatFloat(score));
 	window->draw(scoreText);
 	upgradeCostText.setString("Upgrade Cost: " + formatFloat(upgradeCost));
@@ -51,5 +53,7 @@ void TextsMain::drawInGameTextsMain(sf::RenderWindow* window, float score, float
 	window->draw(mousePowerText);
 	criticalChance.setString("Critical Chance: " + formatFloat(criticalChancee * 100.0f) + "%");
 	window->draw(criticalChance);
+	level.setString("Level: " + std::to_string(levell));
+	window->draw(level);
 	window->draw(upgrade);
 }

@@ -60,17 +60,30 @@ void TextsShop::drawInGameTextsShop(sf::RenderWindow* window, std::vector<Item> 
 		sf::Text itemText;
 		sf::Text itemMousePower;
 		sf::Text itemCriticalChance;
+		// Sprite coodinates and items size
+		sf::Vector2f position = items[i].getSprite().getPosition();
+		sf::Texture texture = items[i].getTexture();
+		sf::Vector2u size = texture.getSize();
+		unsigned int width = size.x;  
+		unsigned int height = size.y;
+		float x = position.x;
+		float y = position.y;
 		// Set up the text for each item
-		setUpTextShop(&itemText, sf::Vector2f(400.0f + i * 250.0f - 15 * i, 280 + 15 * i), 30);
+		setUpTextShop(&itemText, sf::Vector2f(x + 10.0f, y + 10.0f), 30);
 		itemText.setString(items[i].getName() + " - Cost: " + formatFloatShop(items[i].getCost()));
 		window->draw(itemText);
+		
 		// Set up the mouse power text for each item
-		setUpTextShop(&itemMousePower, sf::Vector2f(400.0f + i * 250.0f - 15 * i, 310 + i * 150), 30);
-		itemMousePower.setString("Mouse Power: " + formatFloatShop(items[i].getMousePower()));
-		window->draw(itemMousePower);
+		if (items[i].getMousePower()) {
+			setUpTextShop(&itemMousePower, sf::Vector2f(x + 10.0f, y + 40.0f), 30);
+			itemMousePower.setString("Mouse Power: " + formatFloatShop(items[i].getMousePower()));
+			window->draw(itemMousePower);
+		}
 		// Set up the critical chance text for each item
-		setUpTextShop(&itemCriticalChance, sf::Vector2f(400.0f + i * 235.0f - 40 * (i == 0), 330 + (i == 0) * 150), 30);
-		itemCriticalChance.setString("Critical Chance: " + formatFloatShop(items[i].getCriticalChance() * 100.0f) + "%");
-		window->draw(itemCriticalChance);
+		if (items[i].getCriticalChance()) {
+			setUpTextShop(&itemCriticalChance, sf::Vector2f(x + 10.0f, y + 70.0f), 30);
+			itemCriticalChance.setString("Critical Chance: " + formatFloatShop(items[i].getCriticalChance() * 100.0f) + "%");
+			window->draw(itemCriticalChance);
+		}
 	}
 }

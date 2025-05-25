@@ -35,7 +35,7 @@ bool Game::loadTexturesMain() {
 
     // Set the texture rect for the gumball sprite
     gumballSprite.setTexture(gumballTexture);
-    gumballSprite.setPosition(WINDOW_WIDTH / 2.0f - 50, WINDOW_HEIGHT / 2.0f - 50);
+    gumballSprite.setPosition(WINDOW_WIDTH / 2.0f - 69.0f, WINDOW_HEIGHT / 2.0f - 69.0f);
 
     // Set the texture rect for the background sprite
     shopButtonEnterSprite.setTexture(shopButtonEnterTexture);
@@ -79,8 +79,8 @@ bool Game::runGame() {
     }
 
     std::vector<Item> items;
-    items.emplace_back(10.0f, "RMT", std::move(rmtTexture), 2, 0);
-    items.emplace_back(20.0f, "BANANAS", std::move(bananaTexture), 0, 0.02);
+    items.emplace_back(10.0f, "RMT", std::move(rmtTexture), 2.0f, 0.0f);
+    items.emplace_back(20.0f, "BANANAS", std::move(bananaTexture), 0.0f, 0.005f);
 
     textsMain = TextsMain();
     if (!(loadTexturesMain() && textsMain.perfromSetupMain())) {
@@ -112,11 +112,14 @@ bool Game::runGame() {
                 // Check if the button was clicked
                 if (isMainScene && upgradeButtonSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
                     if (player.getScore() >= game.getUpgradeCost()) {
+						// Deduct score, increase mouse power, and update upgrade cost
                         player.setScore(player.getScore() - game.getUpgradeCost());
                         player.setScore(std::round(player.getScore() * 100.0f) / 100.0f);
-                        player.setMousePower(player.getMousePower() + player.getMousePower() * UPGRADE_CONSTANT);//setereeee
+                        player.setMousePower(player.getMousePower() + player.getMousePower() * UPGRADE_CONSTANT);
                         player.setMousePower(std::round(player.getMousePower() * 100.0f) / 100.0f); // Round to 2 decimal places
                         game.setUpgradeCost(std::ceil(game.getUpgradeCost() + 1.755f * game.getUpgradeCost() * UPGRADE_CONSTANT));
+                        // increase level
+						game.level++;
                     }
                 }
                 if (isMainScene && gumballSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
@@ -124,7 +127,6 @@ bool Game::runGame() {
 					if (player.getCriticalChance() > static_cast<float>(rand() % 100) / 100.0f) {
                         player.setScore(player.getScore() + player.getMousePower() * 2);// Critical hit
                         player.setScore(std::round(player.getScore() * 100.0f) / 100.0f);
-                        //reset srand
 						srand(static_cast<unsigned int>(time(0))); // Reset the random seed
 					}
                     else {
@@ -147,6 +149,8 @@ bool Game::runGame() {
 						player.setScore(std::round(player.getScore() * 100.0f) / 100.0f);
 						player.setMousePower(player.getMousePower() + items[0].getMousePower());
 						player.setMousePower(std::round(player.getMousePower() * 100.0f) / 100.0f);
+                        items[0].setCost(items[0].getCost() * 1.25);
+                        items[0].setMousePower(items[0].getMousePower() * 1.25f);
 					}
 				}
                 else if (!isMainScene && isShopScene && items[1].getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)))
@@ -156,6 +160,8 @@ bool Game::runGame() {
                         player.setScore(std::round(player.getScore() * 100.0f) / 100.0f);
                         player.setCriticalChance(player.getCriticalChance() + items[1].getCriticalChance());
                         player.setCriticalChance(std::round(player.getCriticalChance() * 100.0f) / 100.0f);
+                        items[1].setCost(items[1].getCost() * 1.25f);
+                        items[1].setCriticalChance(items[1].getCriticalChance() + 0.005f);
                     }
                 }
             }
@@ -166,7 +172,7 @@ bool Game::runGame() {
 				window.draw(gumballSprite);
 				window.draw(upgradeButtonSprite);
 				window.draw(shopButtonEnterSprite);
-				textsMain.drawInGameTextsMain(&window, player.getScore(), game.getUpgradeCost(), player.getMousePower(), player.getCriticalChance());
+				textsMain.drawInGameTextsMain(&window, player.getScore(), game.getUpgradeCost(), player.getMousePower(), player.getCriticalChance(), game.level);
 			}
             else {
                 window.draw(backgroundShopSprite);
@@ -175,7 +181,7 @@ bool Game::runGame() {
                 for (size_t i = 0; i < items.size(); ++i) {
                     sf::Sprite& sprite = items[i].getSprite();
 					if (i == 1)
-						sprite.setPosition(450.0f + i * 250.0f, 400.0f);// banana
+						sprite.setPosition(450.0f + i * 250.0f, 400.0f);
 					else
                     sprite.setPosition(450.0f + i * 250.0f, 360.0f);
                     window.draw(sprite);
