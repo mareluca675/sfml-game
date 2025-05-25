@@ -132,8 +132,7 @@ bool Game::runGame() {
                     isMainScene = 1;
                     isShopScene = 0;
                 }
-                else if (isShopScene && !isMainScene && rmt.getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)) && game.getScore() >= rmt.getCost()) {
-                        // Deduct the cost from the score
+                else if (isShopScene && !isMainScene && rmt.getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)) && game.getScore() >= rmt.getCost()) 
 					player.equipItem(rmt);
 					rmt.buyItem(rmt, game);
                 }
