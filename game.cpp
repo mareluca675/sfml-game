@@ -88,13 +88,13 @@ std::vector<Item> Game::getItems() {
 
 	// Create items with textures and properties
 	Item rmt(1.0f, "RMT", std::move(rmtTexture), 0.1f, 0.0f);
-	rmt.setTexture(rmtTexture); // Set texture for RMT item
+	//rmt.setTexture(rmtTexture); // Set texture for RMT item
 
 	Item banana(1.0f, "Banana", std::move(bananaTexture), 0.2f, 0.0f);
-	banana.setTexture(bananaTexture); // Set texture for Banana item
+	//banana.setTexture(bananaTexture); // Set texture for Banana item
 
 	Item rubberDuck(1.0f, "Rubber Duck", std::move(rubberDuckTexture), 0.3f, 0.0f);
-	rubberDuck.setTexture(rubberDuckTexture); // Set texture for Rubber Duck item
+	//rubberDuck.setTexture(rubberDuckTexture); // Set texture for Rubber Duck item
 
 	// Add items to the vector
 	items.push_back(rmt);
@@ -160,17 +160,6 @@ void Game::upgradeMousePower(sf::RenderWindow& window, Player& player) {
     else {
         // Not enough score, show message for half a second
         textsMain.upgrade.setString("Not enough score");
-
-        // Wait half a second
-        sf::Clock clock;
-        while (clock.getElapsedTime().asSeconds() < 0.5f) {
-            window.clear();
-            drawMainScene(window, player);
-            window.display();
-        }
-
-        // Reset upgrade text
-        textsMain.upgrade.setString("Upgrade");
     }
 }
 
@@ -190,6 +179,7 @@ void Game::gainScore(Player &player) {
 bool Game::runGame() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Gumballicker");
     Player player;
+    sf::Clock clock;
     std::vector<Item> items = getItems();
 
 	// Display items for debbugging purposes
@@ -213,6 +203,11 @@ bool Game::runGame() {
                 window.close();
             }
 
+            // Check if we need to update the upgrade button text after a click
+            if (clock.getElapsedTime().asSeconds() > 0.75 && textsMain.upgrade.getString() == "Not enough score") {
+                textsMain.upgrade.setString("Upgrade");
+            }
+
             // Mouse button pressed event
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
                 // Get mouse position relative to the window
@@ -222,6 +217,7 @@ bool Game::runGame() {
                 if (isMainScene && upgradeButtonSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
 					// Upgrade mouse power
                     upgradeMousePower(window, player);
+                    clock.restart();
                 }
 
 				// Check if gumball was clicked

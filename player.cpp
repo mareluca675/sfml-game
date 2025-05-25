@@ -1,7 +1,7 @@
 #include "player.h"
 
 Player::Player() {
-	score = 10000000.0f;
+	std::cin >> score;
 	mousePower = 1.0f;
 	criticalChance = 0.0f;
 }
