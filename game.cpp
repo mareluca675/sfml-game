@@ -1,4 +1,4 @@
-#include "game.h"
+﻿#include "game.h"
 #include "player.h"
 #include "item.h"
 
@@ -64,53 +64,34 @@ bool Game::loadTexturesShop() {
 }
 
 std::vector<Item> Game::getItems() {
-	std::vector<Item> items;
+    std::vector<Item> items;
+    items.reserve(3);   // ← prevent reallocations
 
-	// Textures for items
-    sf::Texture rmtTexture;
-	sf::Texture bananaTexture;
-	sf::Texture rubberDuckTexture;
-
-    if (!rmtTexture.loadFromFile("textures/rmt.png")) {
-        std::cerr << "Failed to load RMT texture.";
-		return std::vector<Item>(); // Return empty vector on failure
+    sf::Texture rmtTexture, bananaTexture, rubberDuckTexture;
+    if (!rmtTexture.loadFromFile("textures/rmt.png") ||
+        !bananaTexture.loadFromFile("textures/bananas.png") ||
+        !rubberDuckTexture.loadFromFile("textures/rubber_duck.png"))
+    {
+        std::cerr << "Failed to load an item texture\n";
+        return {};
     }
 
-    if (!bananaTexture.loadFromFile("textures/bananas.png")) {
-        std::cerr << "Failed to load BANANAS texture.";
-        return std::vector<Item>(); // Return empty vector on failure
-    }
+    // Now each emplace_back goes directly into its final slot.
+    items.emplace_back(1.0f, "RMT", std::move(rmtTexture), 0.1f, 0.0f);
+    items.emplace_back(1.0f, "Banana", std::move(bananaTexture), 0.2f, 0.0f);
+    items.emplace_back(1.0f, "Rubber Duck", std::move(rubberDuckTexture), 0.3f, 0.0f);
 
-	if (!rubberDuckTexture.loadFromFile("textures/rubber_duck.png")) {
-		std::cerr << "Failed to load Rubber Duck texture.";
-		return std::vector<Item>(); // Return empty vector on failure
-	}
-
-	// Create items with textures and properties
-	Item rmt(1.0f, "RMT", std::move(rmtTexture), 0.1f, 0.0f);
-	//rmt.setTexture(rmtTexture); // Set texture for RMT item
-
-	Item banana(1.0f, "Banana", std::move(bananaTexture), 0.2f, 0.0f);
-	//banana.setTexture(bananaTexture); // Set texture for Banana item
-
-	Item rubberDuck(1.0f, "Rubber Duck", std::move(rubberDuckTexture), 0.3f, 0.0f);
-	//rubberDuck.setTexture(rubberDuckTexture); // Set texture for Rubber Duck item
-
-	// Add items to the vector
-	items.push_back(rmt);
-	items.push_back(banana);
-	items.push_back(rubberDuck);
-
+    // Now set up scenes
     textsMain = TextsMain();
     if (!(loadTexturesMain() && textsMain.perfromSetupMain())) {
-        std::cout << "ERROR: Couldn't perfrom main scene setup.";
-        return std::vector<Item>();
+        std::cerr << "ERROR: Couldn't perform main scene setup.\n";
+        return {};
     }
 
     textsShop = TextsShop();
     if (!(loadTexturesShop() && textsShop.perfromSetupTextShop(items))) {
-        std::cout << "ERROR: Couldn't perfrom shop scene setup.";
-        return std::vector<Item>();
+        std::cerr << "ERROR: Couldn't perform shop scene setup.\n";
+        return {};
     }
 
     return items;
@@ -178,90 +159,66 @@ void Game::gainScore(Player &player) {
 
 bool Game::runGame() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Gumballicker");
+
     Player player;
     sf::Clock clock;
     std::vector<Item> items = getItems();
-
-	// Display items for debbugging purposes
-	for (const auto& item : items) {
-		std::cout << "Item: " << item.getName() << ", Cost: " << item.getCost()
-			<< ", Mouse Power: " << item.getMousePower()
-			<< ", Critical Chance: " << item.getCriticalChance() << std::endl;
-	}
-
-	if (items.empty()) {
-		return false;
-	}
+    if (items.empty()) return false;
 
     while (window.isOpen()) {
-        // Process events
+        // 1) Process ALL events
         sf::Event event;
-
         while (window.pollEvent(event)) {
-            // Close window event
-            if (event.type == sf::Event::Closed) {
+            if (event.type == sf::Event::Closed)
                 window.close();
-            }
 
-            // Check if we need to update the upgrade button text after a click
-            if (clock.getElapsedTime().asSeconds() > 3 && textsMain.upgrade.getString() == "Not enough score") {
+            // Reset "Not enough score" text after 3s
+            if (clock.getElapsedTime().asSeconds() > 0.75f &&
+                textsMain.upgrade.getString() == "Not enough score") {
                 textsMain.upgrade.setString("Upgrade");
             }
 
-            // Mouse button pressed event
-            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                // Get mouse position relative to the window
-                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+            // Mouse-click handling
+            if (event.type == sf::Event::MouseButtonPressed &&
+                event.mouseButton.button == sf::Mouse::Left) {
 
-                // Check if the upgrade button was clicked
-                if (isMainScene && upgradeButtonSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-					// Upgrade mouse power
+                sf::Vector2f mp = window.mapPixelToCoords(
+                    { event.mouseButton.x, event.mouseButton.y });
+
+                if (isMainScene && upgradeButtonSprite.getGlobalBounds().contains(mp)) {
                     upgradeMousePower(window, player);
                     clock.restart();
                 }
-
-				// Check if gumball was clicked
-                if (isMainScene && gumballSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-					// Gain score when gumball is clicked
-					gainScore(player);
-				}
-
-				// Check if shop button was clicked
-                if (isMainScene && shopButtonEnterSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-                    isMainScene = 0;
-                    isShopScene = 1;
+                else if (isMainScene && gumballSprite.getGlobalBounds().contains(mp)) {
+                    gainScore(player);
                 }
-                else if (isShopScene && shopButtonLeaveSprite.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-                    isMainScene = 1;
-                    isShopScene = 0;
+                else if (isMainScene && shopButtonEnterSprite.getGlobalBounds().contains(mp)) {
+                    isMainScene = false;
+                    isShopScene = true;
                 }
-
-				// Check if items were clicked using a for loop
-                if (isShopScene) {
-                    for (size_t i = 0; i < items.size(); ++i) {
-                        if (isShopScene && items[i].getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-                            std::cout << "Item " << i << " clicked: " << items[i].getName() << std::endl;
-                            // Check if player has enough score to buy the item
-                            if (player.getScore() >= items[i].getCost()) {
-                                player.buyItem(items[i]);
-                            }
+                else if (isShopScene && shopButtonLeaveSprite.getGlobalBounds().contains(mp)) {
+                    isMainScene = true;
+                    isShopScene = false;
+                }
+                else if (isShopScene) {
+                    for (auto& item : items) {
+                        if (item.getSprite().getGlobalBounds().contains(mp) &&
+                            player.getScore() >= item.getCost()) {
+                            player.buyItem(item);
                         }
                     }
                 }
             }
-
-            window.clear();
-
-			if (isMainScene) {
-                drawMainScene(window, player);
-			}
-            else {
-				drawShopScene(window, player, items);
-            }
-
-            window.display();
         }
+
+        // 2) Clear, draw, display *every frame* (outside pollEvent)
+        window.clear();
+        if (isMainScene)
+            drawMainScene(window, player);
+        else
+            drawShopScene(window, player, items);
+        window.display();
     }
 
-    return false;
+    return true;
 }
