@@ -158,7 +158,7 @@ void Game::upgradeMousePower(sf::RenderWindow& window, Player& player) {
         ++level;
     }
     else {
-        // Not enough score, show message for half a second
+        // Not enough score
         textsMain.upgrade.setString("Not enough score");
     }
 }
@@ -204,7 +204,7 @@ bool Game::runGame() {
             }
 
             // Check if we need to update the upgrade button text after a click
-            if (clock.getElapsedTime().asSeconds() > 0.75 && textsMain.upgrade.getString() == "Not enough score") {
+            if (clock.getElapsedTime().asSeconds() > 3 && textsMain.upgrade.getString() == "Not enough score") {
                 textsMain.upgrade.setString("Upgrade");
             }
 
@@ -237,13 +237,17 @@ bool Game::runGame() {
                 }
 
 				// Check if items were clicked using a for loop
-				for (size_t i = 0; i < items.size(); ++i) {
-					if (isShopScene && items[i].getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-						std::cout << "Item " << i << " clicked: " << items[i].getName() << std::endl;
-						player.buyItem(items[i]);
-					}
-				}
-
+                if (isShopScene) {
+                    for (size_t i = 0; i < items.size(); ++i) {
+                        if (isShopScene && items[i].getSprite().getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                            std::cout << "Item " << i << " clicked: " << items[i].getName() << std::endl;
+                            // Check if player has enough score to buy the item
+                            if (player.getScore() >= items[i].getCost()) {
+                                player.buyItem(items[i]);
+                            }
+                        }
+                    }
+                }
             }
 
             window.clear();
