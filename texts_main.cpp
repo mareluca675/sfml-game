@@ -51,7 +51,7 @@ void TextsMain::drawInGameTextsMain(sf::RenderWindow* window, float score, float
 	window->draw(upgradeCostText);
 	mousePowerText.setString("Mouse Power: " + formatFloat(mousePower));
 	window->draw(mousePowerText);
-	criticalChance.setString("Critical Chance: " + formatFloat(criticalChancee * 100.0f) + "%");
+	criticalChance.setString("Critical Chance: " + formatFloat(criticalChancee) + "%");
 	window->draw(criticalChance);
 	level.setString("Level: " + std::to_string(levell));
 	window->draw(level);

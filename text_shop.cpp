@@ -52,7 +52,7 @@ void TextsShop::drawInGameTextsShop(sf::RenderWindow* window, std::vector<Item> 
 	// Draw the critical chance in the shop scene
 	sf::Text criticalChanceText;
 	setUpTextShop(&criticalChanceText, sf::Vector2f(10.0f, 70.0f), 40);	
-	criticalChanceText.setString("Critical Chance: " + formatFloatShop(criticalChance * 100.0f) + "%");
+	criticalChanceText.setString("Critical Chance: " + formatFloatShop(criticalChance) + "%");
 	window->draw(criticalChanceText);
 
 	// Draw the items in the shop scene

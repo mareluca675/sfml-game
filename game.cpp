@@ -78,8 +78,8 @@ std::vector<Item> Game::getItems() {
 
     // Now each emplace_back goes directly into its final slot.
     items.emplace_back(1.0f, "RMT", std::move(rmtTexture), 0.1f, 0.0f);
-    items.emplace_back(1.0f, "Banana", std::move(bananaTexture), 0.2f, 0.0f);
-    items.emplace_back(1.0f, "Rubber Duck", std::move(rubberDuckTexture), 0.3f, 0.0f);
+    items.emplace_back(1.0f, "Banana", std::move(bananaTexture), 0.2f, 0.00025f);
+    items.emplace_back(1.0f, "Rubber Duck", std::move(rubberDuckTexture), 0.3f, 0.005f);
 
     // Now set up scenes
     textsMain = TextsMain();
@@ -169,10 +169,12 @@ bool Game::runGame() {
         // 1) Process ALL events
         sf::Event event;
         while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed) {
                 window.close();
+                return false;
+            }
 
-            // Reset "Not enough score" text after 3s
+            // Reset "Not enough score" text after 0.75s
             if (clock.getElapsedTime().asSeconds() > 0.75f &&
                 textsMain.upgrade.getString() == "Not enough score") {
                 textsMain.upgrade.setString("Upgrade");
